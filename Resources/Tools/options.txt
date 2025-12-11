@@ -1,0 +1,7 @@
+# ARMGDDN Autocracker User Options
+# These settings are used when generating steam_settings
+
+username=ARMGDDN
+portable=0
+local_save_path=saves
+saves_folder_name=GSE Saves

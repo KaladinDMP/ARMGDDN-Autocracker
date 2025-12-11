@@ -10,255 +10,11 @@ import threading
 import queue
 
 HARDCODED_STEAM_IDS = [
-    76561198017975643,
-    76561198028121353,
-    76561197979911851,
-    76561198355953202,
-    76561198217186687,
-    76561197993544755,
-    76561198001237877,
-    76561198237402290,
-    76561198152618007,
-    76561198213148949,
-    76561198037867621,
-    76561197969050296,
-    76561198134044398,
-    76561198001678750,
-    76561198094227663,
-    76561197973009892,
-    76561198019712127,
-    76561197976597747,
-    76561197963550511,
-    76561198044596404,
-    76561198119667710,
-    76561197962473290,
-    76561197969810632,
-    76561198095049646,
-    76561197995070100,
-    76561198085065107,
-    76561197996432822,
-    76561199492215670,
-    76561198313790296,
-    76561198033715344,
-    76561198256917957,
-    76561198063574735,
-    76561198388522904,
-    76561197970825215,
-    76561198027214426,
-    76561198035900006,
-    76561198154462478,
-    76561198281128349,
-    76561198367471798,
-    76561198407953371,
-    76561199130977924,
-    76561197976968076,
-    76561198235911884,
-    76561198104323854,
-    76561198062901118,
-    76561198842864763,
-    76561198077213101,
-    76561198027233260,
-    76561198122859224,
-    76561198063728345,
-    76561198010615256,
-    76561198008181611,
-    76561198001221571,
-    76561197974742349,
-    76561198082995144,
-    76561197968410781,
-    76561198890581618,
-    76561197976796589,
-    76561197971011821,
-    76561198097945516,
-    76561198118726910,
-    76561197993312863,
-    76561198326510209,
-    76561197979667190,
-    76561197990233857,
-    76561197978640923,
-    76561198121398682,
-    76561198158932704,
-    76561198109083829,
-    76561197963534359,
-    76561198019009765,
-    76561197981111953,
-    76561198077248235,
-    76561198139084236,
-    76561198093753361,
-    76561198382166453,
-    76561198096081579,
-    76561198124872187,
-    76561198045455280,
-    76561197992133229,
-    76561198152760885,
-    76561198048373585,
-    76561198172367910,
-    76561198037809069,
-    76561198005337430,
-    76561198396723427,
-    76561197994616562,
-    76561198026221141,
-    76561199168919006,
-    76561198318944318,
-    76561199353305847,
-    76561197983517848,
-    76561198102767019,
-    76561199080934614,
-    76561197972951657,
-    76561198006391846,
-    76561198155124847,
-    76561198040421250,
-    76561198318111105,
-    76561198021180815,
-    76561198044387084,
-    76561197984010356,
-    76561198251835488,
-    76561197992548975,
-    76561198017902347,
-    76561198008797636,
-    76561198025858988,
-    76561198061393233,
-    76561198128158703,
-    76561198015685843,
-    76561198192399786,
-    76561197965978376,
-    76561197972378106,
-    76561198015856631,
-    76561198417144062,
-    76561197988664525,
-    76561198219343843,
-    76561198031837797,
-    76561198039492467,
-    76561198315929726,
-    76561197971026489,
-    76561197982718230,
-    76561198105279930,
-    76561198047438206,
-    76561198054210948,
-    76561198264362271,
-    76561198028011423,
-    76561198020125851,
-    76561197973230221,
-    76561197995008105,
-    76561198050474710,
-    76561198252374474,
-    76561198996604130,
-    76561199173688191,
-    76561197984235967,
-    76561197968401807,
-    76561198106206019,
-    76561198842603734,
-    76561198034213886,
-    76561197997477460,
-    76561198015992850,
-    76561198045540632,
-    76561199187733000,
-    76561198025653291,
-    76561197969148931,
-    76561197975329196,
-    76561198043532513,
-    76561198029503957,
-    76561198096632451,
-    76561198051887711,
-    76561198018254158,
-    76561197970246998,
-    76561198111433283,
-    76561198057648189,
-    76561198029532782,
-    76561198009596142,
-    76561198004332929,
-    76561198031164839,
-    76561198027668357,
-    76561198294806446,
-    76561198025391492,
-    76561198048151962,
-    76561197986240493,
-    76561198003041763,
-    76561198072361453,
-    76561198020746864,
-    76561198042965266,
-    76561198269242105,
-    76561198104561325,
-    76561198046642155,
-    76561198172925593,
-    76561198072936438,
-    76561198086250077,
-    76561198141387426,
-    76561198426000196,
-    76561198154522279,
-    76561198006715789,
-    76561198106145311,
-    76561198027066612,
-    76561197992105918,
-    76561197962630138,
-    76561197985091630,
-    76561198171791210,
-    76561198120120943,
-    76561198071709714,
-    76561198844130640,
-    76561198283395702,
-    76561198042781427,
-    76561198124865933,
-    76561198051725954,
-    76561198443388781,
-    76561197994575642,
-    76561197981228012,
-    76561198032614383,
-    76561198015514779,
-    76561198088628817,
-    76561198074920693,
-    76561197991699268,
-    76561198079227501,
-    76561197981027062,
-    76561198122276418,
-    76561198019841907,
-    76561197972259379,
-    76561198070220549,
-    76561198085238363,
-    76561198090111762,
-    76561197991613008,
-    76561197970545939,
-    76561198060520130,
-    76561198093579202,
-    76561198079896896,
-    76561198846208086,
-    76561197973701057,
-    76561198026306582,
-    76561197988052802,
-    76561197977920776,
-    76561198150467988,
-    76561198427572372,
-    76561198034906703,
-    76561198028428529,
-    76561198098314980,
-    76561198117483409,
-    76561198007200913,
-    76561197966617426,
-    76561198008549198,
-    76561197982273259,
-    76561198165450871,
-    76561198002535276,
-    76561198025111129,
-    76561198101049562,
-    76561197969365800,
-    76561197984605215,
-    76561198413266831,
-    76561198413088851,
-    76561198004532679,
-    76561197970307937,
-    76561198811114019,
-    76561197970360549,
-    76561197972529138,
-    76561198119915053,
-    76561197970970678,
-    76561198356842617,
-    76561198083977059,
-    76561198027917594,
-    76561197967716198,
-    76561198831075066,
-    76561198033967307,
-    76561198028125071,
-    76561198217979953,
+    76561198017975643, 76561198028121353, 76561197979911851, 76561198355953202,
+    76561198217186687, 76561197993544755, 76561198001237877, 76561198237402290,
+    76561198152618007, 76561198213148949, 76561198037867621, 76561197969050296,
+    76561198134044398, 76561198001678750, 76561198094227663, 76561197973009892,
+    76561198019712127, 76561197976597747, 76561197963550511, 76561198044596404,
 ]
 
 STEAM_IDS_URL = "https://raw.githubusercontent.com/KaladinDMP/steam-top-accounts-data/main/steam_ids_only.txt"
@@ -273,78 +29,197 @@ def get_base_path():
 BASE_PATH = get_base_path()
 LOCAL_STEAM_IDS_FILE = os.path.join(BASE_PATH, LOCAL_STEAM_IDS_FILE)
 
-def download_and_merge_steam_ids():
+def get_options_file_path():
+    """Get path to options.txt in Resources/Tools folder"""
+    base = get_base_path()
+    return os.path.join(base, "Tools", "options.txt")
+
+def load_user_options():
     """
-    1. Start with hardcoded list
-    2. Download GitHub list
-    3. Add any NEW IDs from GitHub to hardcoded list
-    4. Return combined list
+    Load user options from Resources/Tools/options.txt
+    Returns dict with defaults if file doesn't exist
     """
-    print(f"Starting with {len(HARDCODED_STEAM_IDS)} hardcoded Steam IDs...")
+    defaults = {
+        'account_name': 'ARMGDDN',
+        'portable': '0',
+        'local_save_path': 'saves',
+        'saves_folder_name': 'GSE Saves'
+    }
     
+    options_file = get_options_file_path()
+    
+    if not os.path.exists(options_file):
+        return defaults
+    
+    try:
+        with open(options_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if '=' in line and not line.startswith('#'):
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    if key in defaults:
+                        defaults[key] = value
+    except Exception as e:
+        print(f"Warning: Could not load options.txt: {e}")
+    
+    return defaults
+
+def save_user_options(options):
+    """Save user options to Resources/Tools/options.txt"""
+    options_file = get_options_file_path()
+    
+    # Make sure Tools directory exists
+    tools_dir = os.path.dirname(options_file)
+    if not os.path.exists(tools_dir):
+        os.makedirs(tools_dir)
+    
+    try:
+        with open(options_file, 'w', encoding='utf-8') as f:
+            f.write("# ARMGDDN Autocracker User Options\n")
+            f.write("# These settings are used when generating steam_settings\n")
+            f.write("\n")
+            f.write(f"username={options['account_name']}\n")
+            f.write(f"portable={options['portable']}\n")
+            f.write(f"local_save_path={options['local_save_path']}\n")
+            f.write(f"saves_folder_name={options['saves_folder_name']}\n")
+        print(f"Options saved to: {options_file}")
+    except Exception as e:
+        print(f"Warning: Could not save options.txt: {e}")
+
+def prompt_user_options():
+    """
+    Ask user if they want to change settings.
+    Returns updated options dict.
+    """
+    options = load_user_options()
+    
+    print()
+    print("============================================")
+    print("  User Settings Configuration")
+    print("============================================")
+    print()
+    print(f"Current username: {options['account_name']}")
+    if options['portable'] == '1':
+        print(f"Save location: PORTABLE (game folder: {options['local_save_path']})")
+    else:
+        print(f"Save location: AppData ({options['saves_folder_name']})")
+    print()
+    
+    change = input("Change username or save location? (Y/N): ").strip().upper()
+    
+    if change != 'Y':
+        print("Keeping current settings.")
+        return options
+    
+    print()
+    print("--------------------------------------------")
+    print("  Username")
+    print("--------------------------------------------")
+    print(f"Currently set to: {options['account_name']}")
+    new_username = input("Type new username or hit Enter to keep current: ").strip()
+    if new_username:
+        options['account_name'] = new_username
+        print(f"Username changed to: {options['account_name']}")
+    else:
+        print(f"Keeping username: {options['account_name']}")
+    
+    print()
+    print("--------------------------------------------")
+    print("  Save Location")
+    print("--------------------------------------------")
+    print()
+    print("Options:")
+    print("  1. PORTABLE - 1 - saves in game folder (relative to DLL)")
+    print("     WARNING: Saves stored with game files, not in AppData")
+    print()
+    print("  0. PORTABLE - 0 - APPDATA - Saves in AppData folder (default, recommended)")
+    print("     Saves persist even if game is deleted/moved")
+    print()
+    
+    if options['portable'] == '1':
+        print(f"Currently: PORTABLE (path: {options['local_save_path']})")
+    else:
+        print(f"Currently: APPDATA (folder: {options['saves_folder_name']})")
+    print()
+    
+    save_choice = input("Choose save location (1=Portable, 0=AppData, Enter=keep current): ").strip()
+    
+    if save_choice == '1':
+        options['portable'] = '1'
+        print()
+        print(f"Current portable path: {options['local_save_path']}")
+        print("This path is relative to the game's steam_api DLL location.")
+        new_path = input("Enter save folder name (or Enter for current): ").strip()
+        if new_path:
+            options['local_save_path'] = new_path
+        print(f"Portable saves will be stored in: ./{options['local_save_path']}/")
+        
+    elif save_choice == '0':
+        options['portable'] = '0'
+        print()
+        print(f"Current AppData folder name: {options['saves_folder_name']}")
+        new_folder = input("Enter folder name (or Enter for 'GSE Saves'): ").strip()
+        if new_folder:
+            options['saves_folder_name'] = new_folder
+        else:
+            options['saves_folder_name'] = 'GSE Saves'
+        print(f"Saves will be stored in: %AppData%/{options['saves_folder_name']}/")
+    else:
+        print("Keeping current save location setting.")
+    
+    # Save the options for next time
+    save_user_options(options)
+    
+    print()
+    print("Settings updated!")
+    print()
+    
+    return options
+
+def download_and_merge_steam_ids():
+    """Download and merge Steam IDs from GitHub with hardcoded list."""
+    print(f"Starting with {len(HARDCODED_STEAM_IDS)} hardcoded Steam IDs...")
     final_steam_ids = HARDCODED_STEAM_IDS.copy()
     
     try:
         print("Attempting to download Steam IDs from GitHub...")
-        with urllib.request.urlopen(STEAM_IDS_URL) as response:
+        with urllib.request.urlopen(STEAM_IDS_URL, timeout=10) as response:
             content = response.read().decode('utf-8')
             
             with open(LOCAL_STEAM_IDS_FILE, 'w') as f:
                 f.write(content)
-            print(f"Successfully saved Steam IDs to local cache: {LOCAL_STEAM_IDS_FILE}")
             
             github_steam_ids = []
             for line in content.strip().split('\n'):
                 line = line.strip()
-                if line:  
+                if line:
                     try:
                         github_steam_ids.append(int(line))
                     except ValueError:
-                        print(f"Warning: Could not convert '{line}' to Steam ID")
+                        pass
             
-            print(f"Downloaded {len(github_steam_ids)} Steam IDs from GitHub")
-            
-            new_ids = 0
             for steam_id in github_steam_ids:
                 if steam_id not in HARDCODED_STEAM_IDS:
                     final_steam_ids.append(steam_id)
-                    new_ids += 1
-                    print(f"Adding new Steam ID: {steam_id}")
-            
-            print(f"Added {new_ids} new Steam IDs from GitHub")
-            print(f"Final list contains {len(final_steam_ids)} Steam IDs")
-            
+                    
     except Exception as e:
-        print(f"Error downloading Steam IDs from GitHub: {e}")
-        print("Using hardcoded list only...")
-        
+        print(f"Error downloading Steam IDs: {e}")
         try:
             with open(LOCAL_STEAM_IDS_FILE, 'r') as f:
                 content = f.read()
-                github_steam_ids = []
                 for line in content.strip().split('\n'):
                     line = line.strip()
                     if line:
                         try:
-                            github_steam_ids.append(int(line))
+                            steam_id = int(line)
+                            if steam_id not in final_steam_ids:
+                                final_steam_ids.append(steam_id)
                         except ValueError:
-                            print(f"Warning: Could not convert '{line}' to Steam ID")
-                
-                print(f"Loaded {len(github_steam_ids)} Steam IDs from local cache")
-                
-                new_ids = 0
-                for steam_id in github_steam_ids:
-                    if steam_id not in HARDCODED_STEAM_IDS:
-                        final_steam_ids.append(steam_id)
-                        new_ids += 1
-                        print(f"Adding new Steam ID from cache: {steam_id}")
-                
-                print(f"Added {new_ids} new Steam IDs from cache")
-                print(f"Final list contains {len(final_steam_ids)} Steam IDs")
-                
-        except Exception as cache_error:
-            print(f"Error loading from local cache: {cache_error}")
-            print("No local cache available. Using hardcoded list only.")
+                            pass
+        except:
+            pass
     
     return final_steam_ids
 
@@ -358,69 +233,49 @@ from steam.enums import common
 from steam.enums.common import EResult
 from steam.enums.emsg import EMsg
 from steam.core.msg import MsgProto
-import steam.protobufs.steammessages_publishedfile_pb2
 
-def setup_protobuf_path():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    protobuf_dir = os.path.join(current_dir, 'new_venv', 'Lib', 'site-packages', 'steam', 'protobufs')
-    
-    if protobuf_dir not in sys.path:
-        sys.path.append(protobuf_dir)
-
-setup_protobuf_path()
-
-try:
-    from steam.protobufs import steammessages_inventory_pb2
-except ImportError as e:
-    print(f"Error importing protobuf module: {e}")
-    
 prompt_for_unavailable = True
 
 if len(sys.argv) < 2:
-    print("\nUsage: ARMGDDN.Steam.Settings.exe APPID \n\nExample:ARMGDDN.Steam.Settings.exe 480\n".format(sys.argv[0], sys.argv[0]))
+    print("\nUsage: ARMGDDN.Steam.Settings.exe APPID\n\nExample: ARMGDDN.Steam.Settings.exe 480\n")
     sys.exit(1)
 
 appids = []
 for id in sys.argv[1:]:
-    appids +=  [int(id)]
+    appids += [int(id)]
 
 client = SteamClient()
 
-if (len(USERNAME) == 0 or len(PASSWORD) == 0):
+if len(USERNAME) == 0 or len(PASSWORD) == 0:
     client.cli_login()
 else:
     result = client.login(USERNAME, password=PASSWORD)
     auth_code, two_factor_code = None, None
     while result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode,
-                        EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch,
-                        EResult.TryAnotherCM, EResult.ServiceUnavailable,
-                        EResult.InvalidPassword,
-                        ):
+                     EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch,
+                     EResult.TryAnotherCM, EResult.ServiceUnavailable,
+                     EResult.InvalidPassword):
 
         if result == EResult.InvalidPassword:
-            print("invalid password, the password you set is wrong.")
+            print("Invalid password, the password you set is wrong.")
             sys.exit(1)
-
         elif result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode):
             prompt = ("Enter email code: " if result == EResult.AccountLogonDenied else
-                        "Incorrect code. Enter email code: ")
+                      "Incorrect code. Enter email code: ")
             auth_code, two_factor_code = input(prompt), None
-
         elif result in (EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch):
             prompt = ("Enter 2FA code: " if result == EResult.AccountLoginDeniedNeedTwoFactor else
-                        "Incorrect code. Enter 2FA code: ")
+                      "Incorrect code. Enter 2FA code: ")
             auth_code, two_factor_code = None, input(prompt)
-
         elif result in (EResult.TryAnotherCM, EResult.ServiceUnavailable):
             if prompt_for_unavailable and result == EResult.ServiceUnavailable:
                 while True:
                     answer = input("Steam is down. Keep retrying? [y/n]: ").lower()
-                    if answer in 'yn': break
-
+                    if answer in 'yn':
+                        break
                 prompt_for_unavailable = False
-                if answer == 'n': break
-
+                if answer == 'n':
+                    break
             client.reconnect(maxdelay=15)
 
         result = client.login(USERNAME, PASSWORD, None, auth_code, two_factor_code)
@@ -432,21 +287,23 @@ def get_stats_schema(client, game_id, owner_id):
     message.body.schema_local_version = -1
     message.body.crc_stats = 0
     message.body.steam_id_for_user = owner_id
-
     client.send(message)
     return client.wait_msg(EMsg.ClientGetUserStatsResponse, timeout=5)
 
+
 def download_achievement_images(game_id, image_names, output_folder):
+    """Download achievement images to images/ folder (GBE format)."""
     q = queue.Queue()
 
     def downloader_thread():
         while True:
             name = q.get()
-            succeeded = False
             if name is None:
                 q.task_done()
                 return
-            for u in ["https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/", "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/"]:
+            succeeded = False
+            for u in ["https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/",
+                      "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/"]:
                 url = "{}{}/{}".format(u, game_id, name)
                 try:
                     with urllib.request.urlopen(url) as response:
@@ -456,11 +313,11 @@ def download_achievement_images(game_id, image_names, output_folder):
                         succeeded = True
                         break
                 except urllib.error.HTTPError as e:
-                    print("HTTPError downloading", url, e.code)
+                    print(f"HTTPError downloading {url}: {e.code}")
                 except urllib.error.URLError as e:
-                    print("URLError downloading", url, e.code)
+                    print(f"URLError downloading {url}: {e.reason}")
             if not succeeded:
-                print("error could not download", name)
+                print(f"Error: could not download {name}")
             q.task_done()
 
     num_threads = 20
@@ -477,133 +334,77 @@ def download_achievement_images(game_id, image_names, output_folder):
 
 
 def generate_achievement_stats(client, game_id, output_directory):
-    achievement_images_dir = os.path.join(output_directory, "achievement_images")
+    """Generate achievements.json and stats.json (GBE format)."""
+    # GBE uses 'images/' folder instead of 'achievement_images/'
+    images_dir = os.path.join(output_directory, "images")
     images_to_download = []
     
     if not TOP_OWNER_IDS:
         print("Warning: No Steam IDs available. Skipping achievement stats generation.")
-        return
+        return False
     
-    stats_generated = False 
-    
+    stats_generated = False
     steam_id_list = TOP_OWNER_IDS + [client.steam_id]
+    
     for x in steam_id_list:
         out = get_stats_schema(client, game_id, x)
         if out is not None:
             if len(out.body.schema) > 0:
                 try:
-                    achievements, stats = achievements_gen.generate_stats_achievements(out.body.schema, output_directory)
+                    achievements, stats = achievements_gen.generate_stats_achievements(
+                        out.body.schema, output_directory
+                    )
                     
                     if stats and len(stats) > 0:
                         stats_generated = True
-                        
-                        stats_output = ""
-                        for s in stats:
-                            default_num = 0
-                            if s['type'] == 'int':
-                                try:
-                                    default_num = int(s['default'])
-                                except ValueError:
-                                    try:
-                                        default_num = int(float(s['default']))
-                                    except ValueError:
-                                        default_num = 0
-                            else:
-                                try:
-                                    default_num = float(s['default'])
-                                except ValueError:
-                                    default_num = 0.0
-                            stats_output += "{}={}={}\n".format(s['name'], s['type'], default_num)
-                        
-                        if stats_output.strip():
-                            with open(os.path.join(output_directory, "stats.txt"), 'w', encoding='utf-8') as f:
-                                f.write(stats_output)
-                            print(f"Created stats.txt with {len(stats)} stats")
+                        print(f"Generated stats.json with {len(stats)} stats")
                     
                     for ach in achievements:
                         if "icon" in ach:
-                            images_to_download.append(ach["icon"])
+                            # Strip 'images/' prefix if present for download
+                            icon_name = ach["icon"].replace("images/", "")
+                            images_to_download.append(icon_name)
                         if "icon_gray" in ach:
-                            images_to_download.append(ach["icon_gray"])
+                            icon_name = ach["icon_gray"].replace("images/", "")
+                            images_to_download.append(icon_name)
+                        if "icongray" in ach:
+                            icon_name = ach["icongray"].replace("images/", "")
+                            images_to_download.append(icon_name)
                     break
                 except ValueError as e:
-                    print(f"Error generating stats achievements for Steam ID {x}: {e}")
+                    print(f"Error generating stats for Steam ID {x}: {e}")
                     continue
-            else:
-                pass
 
     if len(images_to_download) > 0:
-        if not os.path.exists(achievement_images_dir):
-            os.makedirs(achievement_images_dir)
-        download_achievement_images(game_id, images_to_download, achievement_images_dir)
+        if not os.path.exists(images_dir):
+            os.makedirs(images_dir)
+        download_achievement_images(game_id, images_to_download, images_dir)
+        print(f"Downloaded {len(images_to_download)} achievement images to images/ folder")
     
     return stats_generated
 
-def get_ugc_info(client, published_file_id):
-    return client.send_um_and_wait('PublishedFile.GetDetails#1', {
-            'publishedfileids': [published_file_id],
-            'includetags': False,
-            'includeadditionalpreviews': False,
-            'includechildren': False,
-            'includekvtags': False,
-            'includevotes': False,
-            'short_description': True,
-            'includeforsaledata': False,
-            'includemetadata': False,
-            'language': 0
-        })
-
-def download_published_file(client, published_file_id, output_directory):
-    ugc_info = get_ugc_info(client, published_file_id)
-
-    if (ugc_info is None):
-        print("failed getting published file", published_file_id)
-        return None
-
-    file_details = ugc_info.body.publishedfiledetails[0]
-    if (file_details.result != EResult.OK):
-        print("failed getting published file", published_file_id, file_details.result)
-        return None
-
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
-
-    with open(os.path.join(output_directory, "info.txt"), "w") as f:
-        f.write(str(ugc_info.body))
-
-    if len(file_details.file_url) > 0:
-        with urllib.request.urlopen(file_details.file_url) as response:
-            data = response.read()
-            with open(os.path.join(output_directory, file_details.filename.replace("/", "_").replace("\\", "_")), "wb") as f:
-                f.write(data)
-            return data
-        return None
-    else:
-        print("Could not download file", published_file_id, "no url (you can ignore this if the game doesn't need a controller config)")
-        return None
-
 
 def get_inventory_info(client, game_id):
-    return client.send_um_and_wait('Inventory.GetItemDefMeta#1', {
-            'appid': game_id
-        })
+    return client.send_um_and_wait('Inventory.GetItemDefMeta#1', {'appid': game_id})
+
 
 def generate_inventory(client, game_id):
-    inventory = get_inventory_info(client, appid)
+    inventory = get_inventory_info(client, game_id)
     if inventory.header.eresult != EResult.OK:
         return None
-
-    url = "https://api.steampowered.com/IGameInventory/GetItemDefArchive/v0001?appid={}&digest={}".format(game_id, inventory.body.digest)
+    url = f"https://api.steampowered.com/IGameInventory/GetItemDefArchive/v0001?appid={game_id}&digest={inventory.body.digest}"
     try:
         with urllib.request.urlopen(url) as response:
             return response.read()
     except urllib.error.HTTPError as e:
-        print("HTTPError getting", url, e.code)
+        print(f"HTTPError getting inventory: {e.code}")
     except urllib.error.URLError as e:
-        print("URLError getting", url, e.code)
+        print(f"URLError getting inventory: {e.reason}")
     return None
 
+
 def get_dlc(raw_infos):
+    """Extract DLC information from game info."""
     try:
         try:
             dlc_list = set(map(lambda a: int(a), raw_infos["extended"]["listofdlc"].split(",")))
@@ -620,8 +421,213 @@ def get_dlc(raw_infos):
                     depot_app_list.add(int(depot_info["depotfromapp"]))
         return (dlc_list, depot_app_list)
     except:
-        print("could not get dlc infos, are there any dlcs ?")
+        print("Could not get DLC infos, are there any DLCs?")
         return (set(), set())
+
+
+def generate_configs_app_ini(output_directory, dlc_list=None):
+    """
+    Generate configs.app.ini (GBE format) with DLC entries.
+    Always creates the file with default config sections.
+    
+    dlc_list: list of tuples (appid, name) - e.g. [(1234, "DLC Name"), (5678, "Another DLC")]
+              Can be None or empty for no DLCs.
+    """
+    
+    if dlc_list is None:
+        dlc_list = []
+    
+    ini_path = os.path.join(output_directory, "configs.app.ini")
+    
+    lines = []
+    
+    # [app::general] section
+    lines.append("")
+    lines.append("[app::general]")
+    lines.append("# by default the emu will report a `non-beta` branch when the game calls `Steam_Apps::GetCurrentBetaName()`")
+    lines.append("# 1=make the game/app think we're playing on a beta branch")
+    lines.append("# default=0")
+    lines.append("is_beta_branch=0")
+    lines.append("# the name of the current branch, this must also exist in branches.json")
+    lines.append("# otherwise will be ignored by the emu and the default 'public' branch will be used")
+    lines.append("# default=public")
+    lines.append("branch_name=public")
+    
+    # [app::dlcs] section
+    lines.append("")
+    lines.append("[app::dlcs]")
+    lines.append("# 1=report all DLCs as unlocked")
+    lines.append("# 0=report only the DLCs mentioned")
+    lines.append("# some games check for \"hidden\" DLCs, hence this should be set to 1 in that case")
+    lines.append("# but other games detect emus by querying for a fake/bad DLC, hence this should be set to 0 in that case")
+    lines.append("# default=1")
+    lines.append("unlock_all=1")
+    lines.append("# format: ID=name")
+    
+    # Add actual DLC entries if any exist
+    for dlc_id, dlc_name in dlc_list:
+        if dlc_name is not None:
+            lines.append(f"{dlc_id}={dlc_name}")
+        else:
+            lines.append(f"{dlc_id}=Unknown DLC")
+    
+    # [app::paths] section
+    lines.append("")
+    lines.append("[app::paths]")
+    lines.append("# some rare games might need to be provided one or more paths to appids")
+    lines.append("# for example the path to where a DLC is installed")
+    lines.append("# this sets the paths returned by the Steam_Apps::GetAppInstallDir function")
+    lines.append("#556760=../DLCRoot0")
+    lines.append("#1234=./folder_where_steam_api_is")
+    lines.append("#3456=../folder_one_level_above_where_steam_api_is")
+    lines.append("#5678=../../folder_two_levels_above_where_steam_api_is")
+    lines.append("# however some other games might expect this function to return empty paths to properly load DLCs")
+    lines.append("# you can deliberately set the path to be empty to specify this behavior like lines below")
+    lines.append("#1337=")
+    
+    # [app::cloud_save::general] section
+    lines.append("")
+    lines.append("[app::cloud_save::general]")
+    lines.append("# should the emu create the default directory for cloud saves on startup:")
+    lines.append("#   [Steam Install]/userdata/{Steam3AccountID}/{AppID}/")
+    lines.append("# default=1")
+    lines.append("create_default_dir=0")
+    lines.append("# should the emu create the directories specified in the cloud saves section of the current OS on startup")
+    lines.append("# default=1")
+    lines.append("create_specific_dirs=1")
+    lines.append("# directories which should be created on startup, this is used for cloud saves")
+    lines.append("# some games refuse to work unless these directories exist")
+    lines.append("# there are reserved identifiers which are replaced at runtime")
+    lines.append("# you can find a list of them here:")
+    lines.append("#   https://partner.steamgames.com/doc/features/cloud#setup")
+    lines.append("#")
+    lines.append("# the identifiers must be wrapped with double colons \"::\" like this:")
+    lines.append("#   original value: {SteamCloudDocuments}")
+    lines.append("#   ini value:      {::SteamCloudDocuments::}")
+    lines.append("# notice the braces \"{\" and \"}\", they are not changed")
+    lines.append("# the double colons are added between them as shown above")
+    lines.append("#")
+    lines.append("# === known identifiers:")
+    lines.append("# ---")
+    lines.append("# --- general:")
+    lines.append("# ---")
+    lines.append("# Steam3AccountID=current account ID in Steam3 format")
+    lines.append("# 64BitSteamID=current account ID in Steam64 format")
+    lines.append("# gameinstall=[Steam Install]\\SteamApps\\common\\[Game Folder]\\")
+    lines.append("# EmuSteamInstall=this is an emu specific variable, the value preference is as follows:")
+    lines.append("#  - from environment variable: SteamPath")
+    lines.append("#  - or from environment variable: InstallPath")
+    lines.append("#  - or if using coldclientloader: directory of steamclient")
+    lines.append("#  - or if NOT using coldclientloader: directory of steam_api")
+    lines.append("#  - or directory of exe")
+    lines.append("# ---")
+    lines.append("# --- Windows only:")
+    lines.append("# ---")
+    lines.append("# WinMyDocuments=%USERPROFILE%\\My Documents\\")
+    lines.append("# WinAppDataLocal=%USERPROFILE%\\AppData\\Local\\")
+    lines.append("# WinAppDataLocalLow=%USERPROFILE%\\AppData\\LocalLow\\")
+    lines.append("# WinAppDataRoaming=%USERPROFILE%\\AppData\\Roaming\\")
+    lines.append("# WinSavedGames=%USERPROFILE%\\Saved Games\\")
+    lines.append("# ---")
+    lines.append("# --- Linux only:")
+    lines.append("# ---")
+    lines.append("# LinuxHome=~/")
+    lines.append("# SteamCloudDocuments=")
+    lines.append("#   - Linux:   ~/.SteamCloud/[username]/[Game Folder]/")
+    lines.append("#   - Windows: X")
+    lines.append("#   - MAcOS:   X")
+    lines.append("# LinuxXdgDataHome=")
+    lines.append("#   - if 'XDG_DATA_HOME' is defined: $XDG_DATA_HOME/")
+    lines.append("#   - otherwise:                     $HOME/.local/share")
+    
+    # [app::cloud_save::win] section
+    lines.append("")
+    lines.append("[app::cloud_save::win]")
+    lines.append("#dir1={::WinAppDataRoaming::}/publisher_name/some_game")
+    lines.append("#dir2={::WinMyDocuments::}/publisher_name/some_game/{::Steam3AccountID::}")
+    
+    # [app::cloud_save::linux] section
+    lines.append("")
+    lines.append("[app::cloud_save::linux]")
+    lines.append("#dir1={::LinuxXdgDataHome::}/publisher_name/some_game")
+    lines.append("#dir2={::LinuxHome::}/publisher_name/some_game/{::64BitSteamID::}")
+    
+    with open(ini_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines))
+    
+    if len(dlc_list) > 0:
+        print(f"Created configs.app.ini with {len(dlc_list)} DLC entries")
+    else:
+        print("Created configs.app.ini (no DLCs)")
+
+
+def generate_configs_user_ini(output_directory, options):
+    """
+    Generate configs.user.ini (GBE format) using provided options.
+    Matches the exact template format.
+    """
+    ini_path = os.path.join(output_directory, "configs.user.ini")
+    
+    # Build the ini content matching exact template format
+    lines = []
+    
+    # [user::general] section
+    lines.append("[user::general]")
+    lines.append("# user account name")
+    lines.append("# default=gse orca")
+    lines.append(f"account_name={options['account_name']}")
+    lines.append("# your account ID in Steam64 format")
+    lines.append("# if the specified ID is invalid, the emu will ignore it and generate a proper one")
+    lines.append("# default=randomly generated by the emu only once and saved in the global settings")
+    lines.append("account_steamid=76561197960287930")
+    lines.append("# Example Base64 Ticket.")
+    lines.append("#ticket=SGVyZSBsYXlzIHlvdXIgQmFzZTY0IFRpY2tldCB5b3UgYmVhdXRpZnVsIGhhY2tlcg==")
+    lines.append("# Alt SteamId for encrypted savegames.")
+    lines.append("#alt_steamid=0")
+    lines.append("# How many calls before swapping out the SteamId to Alt")
+    lines.append("# IT WILL REPLACE AFTER THOSE CALLS BE AWARE!")
+    lines.append("#alt_steamid_count=5")
+    lines.append("# the language reported to the app/game")
+    lines.append("# this must exist in 'supported_languages.txt', otherwise it will be ignored by the emu")
+    lines.append("# look for the column 'API language code' here: https://partner.steamgames.com/doc/store/localization/languages")
+    lines.append("# default=english")
+    lines.append("language=english")
+    lines.append("# report a country IP if the game queries it")
+    lines.append("# ISO 3166-1-alpha-2 format, use this link to get the 'Alpha-2' country code: https://www.iban.com/country-codes")
+    lines.append("# default=US")
+    lines.append("ip_country=US")
+    
+    # [user::saves] section
+    lines.append("")
+    lines.append("[user::saves]")
+    lines.append("# when this is set, it will force the emu to use the specified location instead of the default global location")
+    lines.append("# path could be absolute, or relative to the location of the .dll/.so")
+    lines.append("# leading and trailing whitespaces are trimmed")
+    lines.append("# when this option is used, the global settings folder is completely ignored, allowing a full portable behavior")
+    lines.append("# default=")
+    
+    if options['portable'] == '1':
+        lines.append(f"local_save_path={options['local_save_path']}")
+    else:
+        lines.append("local_save_path=")
+    
+    lines.append("# name of the base folder used to store save data, leading and trailing whitespaces are trimmed")
+    lines.append("# only useful if 'local_save_path' isn't used")
+    lines.append("# default=GSE Saves")
+    lines.append(f"saves_folder_name={options['saves_folder_name']}")
+    
+    with open(ini_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines))
+    
+    print("Created configs.user.ini")
+    if options['portable'] == '1':
+        print(f"  Save location: PORTABLE (./{options['local_save_path']}/)")
+    else:
+        print(f"  Save location: AppData ({options['saves_folder_name']})")
+
+
+# Main execution
+user_options = prompt_user_options()
 
 for appid in appids:
     out_dir = "steam_settings"
@@ -629,7 +635,7 @@ for appid in appids:
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    print("outputting config to", out_dir)
+    print(f"Outputting config to {out_dir}")
 
     raw = client.get_product_info(apps=[appid])
     game_info = raw["apps"][appid]
@@ -641,12 +647,15 @@ for appid in appids:
         except Exception as e:
             print(f"Unhandled exception during achievement stats generation for appid {appid}: {e}")
 
+    # Write steam_appid.txt
     with open(os.path.join(out_dir, "steam_appid.txt"), 'w') as f:
         f.write(str(appid))
+    print(f"Created steam_appid.txt with appid {appid}")
 
+    # Get and process DLC
     dlc_config_list = []
     dlc_list, depot_app_list = get_dlc(game_info)
-    dlc_infos_backup = ""
+    
     if len(dlc_list) > 0:
         dlc_raw = client.get_product_info(apps=dlc_list)["apps"]
         for dlc in dlc_raw:
@@ -654,13 +663,16 @@ for appid in appids:
                 dlc_config_list.append((dlc, dlc_raw[dlc]["common"]["name"]))
             except:
                 dlc_config_list.append((dlc, None))
-        dlc_infos_backup = json.dumps(dlc_raw, indent=4)
 
-    if dlc_config_list:
-        with open(os.path.join(out_dir, "DLC.txt"), 'w', encoding="utf-8") as f:
-            for x in dlc_config_list:
-                if (x[1] is not None):
-                    f.write("{}={}\n".format(x[0], x[1]))
-        print(f"DLC.txt created with {len(dlc_config_list)} entries")
-    else:
-        print("No DLC found, skipping DLC.txt creation")
+    generate_configs_app_ini(out_dir, dlc_config_list)  # Always call it now
+    
+    generate_configs_user_ini(out_dir, user_options)
+
+    print(f"\nSteam settings generation complete for appid {appid}")
+    print("Files created in steam_settings/ folder:")
+    print("  - steam_appid.txt")
+    print("  - achievements.json (if available)")
+    print("  - stats.json (if available)")
+    print("  - images/ folder (achievement icons)")
+    print("  - configs.app.ini (DLC configuration)")
+    print("  - configs.user.ini (user settings)")
