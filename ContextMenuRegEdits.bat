@@ -91,6 +91,37 @@ if %errorLevel% NEQ 0 (
 echo.
 
 :: -------------------------------------------------------
+::  INSTALL .NET DESKTOP RUNTIME (REQUIRED FOR EXCLUSIONHELPER)
+:: -------------------------------------------------------
+set "dotnetInstaller="
+
+for %%P in ("%gbeDir%\Resources\Tools\windowsdesktop-runtime-10.0.1-win-x64.exe" "%ogDir%\Resources\Tools\windowsdesktop-runtime-10.0.1-win-x64.exe") do (
+    if exist "%%~P" (
+        set "dotnetInstaller=%%~P"
+        goto :found_dotnet
+    )
+)
+goto :skip_dotnet
+
+:found_dotnet
+echo Installing .NET Desktop Runtime (required for Exclusion Helper)...
+echo This may take a moment...
+"%nircmdPath%" speak text "Installing dot net runtime. Please wait."
+"%dotnetInstaller%" /quiet /norestart
+if %errorlevel% EQU 0 (
+    echo .NET Desktop Runtime installed successfully.
+) else if %errorlevel% EQU 1638 (
+    echo .NET Desktop Runtime already installed.
+) else if %errorlevel% EQU 3010 (
+    echo .NET Desktop Runtime installed. Restart may be required.
+) else (
+    echo .NET Desktop Runtime installation returned code: %errorlevel%
+)
+echo.
+
+:skip_dotnet
+
+:: -------------------------------------------------------
 ::  DETECT OG / GBE AND SET PATHS
 :: -------------------------------------------------------
 set "haveOG="

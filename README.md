@@ -6,6 +6,7 @@
 
 Welcome to the GBE Fork Edition! We took everything you loved (and tolerated) about the original ARMGDDN Autocracker and gave it a shiny new engine. Same chaos, better emulation. If the OG Goldberg version was a trusty Honda Civic, this is the turbocharged Type R. Still gets you there, just... fancier.
 
+
 ## 🆕 What's Different From OG Goldberg Steam Emu?
 
 Glad you asked! (Even if you didn't, I'm telling you anyway.)
@@ -21,6 +22,88 @@ Glad you asked! (Even if you didn't, I'm telling you anyway.)
 | Active development | Archived | Actively maintained |
 
 **TL;DR:** GBE Fork is the spiritual successor to Goldberg's emulator, with more features, better compatibility, and someone actually fixing bugs. Revolutionary concept, I know.
+
+## 🎯 Feature Highlights
+
+### Core Functionality
+- **🔄 One-Click DLL Replacement** - Right-click any `steam_api.dll` or `steam_api64.dll`, select Autocracker, and it's replaced with the GBE Fork emulator. Done.
+- **🧊 Cold Client Loader Setup** - For games that need DLL injection instead of replacement. Auto-detects 32/64-bit architecture and configures everything.
+- **🔓 Steam Stub Removal** - Integrated Steamless removes Steam's DRM protection from executables with one click.
+- **🎮 Steam Settings Generator** - Automatically fetches achievements, stats, DLC info, and images from Steam's servers and creates properly formatted config files.
+
+
+### Smart Features
+- **🔍 Fuzzy Game Search** - Don't know the exact game name? Type "cyberpnuk" and it'll find "Cyberpunk 2077". Or just enter the AppID directly if you know it.
+- **🏗️ Auto Architecture Detection** - Cold Client Loader reads the EXE header and picks the correct 32-bit or 64-bit loader automatically.
+- **💾 Persistent User Settings** - Set your username and save location once, use it forever. Set `ask=0` to skip prompts entirely.
+- **📁 Smart AppID Detection** - Searches game folders for existing `steam_appid.txt` before asking you to find it.
+
+
+### Installation & Integration  
+- **🖱️ Nested Context Menus** - Clean, 7-Zip style nested menus. All options under one parent menu, not scattered everywhere.
+- **🤝 Dual Version Support** - Works alongside OG GSE v2.0.0. Install both, get both in one unified menu. Use whichever works better for each game.
+- **🛡️ Windows Defender Integration** - Right-click any folder → "AAC Folder Exclude" to add it to Defender exclusions. No more false positives.
+- **📦 Silent .NET Install** - Required runtime installs automatically and silently during context menu setup.
+
+
+### GBE Fork Specific
+- **🎨 Overlay Support (ExOL)** - Optional builds with working SHIFT+TAB overlay and achievement popups.
+- **📝 Full Config Templates** - Generates `configs.app.ini` and `configs.user.ini` with all GBE Fork options and documentation included.
+- **🖼️ Achievement Images** - Downloads achievement icons to the correct `images/` folder (not `achievement_images/` like OG).
+- **📊 Proper JSON Formats** - Stats as `stats.json`, achievements as `achievements.json` - the way GBE Fork expects them.
+
+
+### VR Support
+- **🥽 VD Batmaker** - Creates batch files to launch cracked games through Virtual Desktop Streamer for VR headset users.
+
+
+## 🤝 Works With OG GSE v2.0.0!
+
+This GBE Fork edition is designed to play nice with the **newly updated [ARMGDDN Autocracker - OG GSE v2.0.0](https://github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE)**! 
+
+
+### How It Works
+
+The context menu installer is smart (well, smart-ish). It looks for both versions in the parent folder:
+
+```
+ARMGDDN.Autocracker/                    # Parent folder (can be named anything)
+├── ARMGDDN.Autocracker.GBE-Fork/       # This one (GBE Fork)
+│   ├── ARMGDDN.Main.exe
+│   └── ...
+│
+├── ARMGDDN.Autocracker.OG-GSE/         # The OG (v2.0.0+)
+│   ├── ARMGDDN.Main.exe
+│   └── ...
+│
+├── AIOContextMenuSetupforAAC.exe       # Shared installer (lives in parent)
+└── AIOContextMenuUninstallerforAAC.exe # Shared uninstaller
+```
+
+When you run `AIOContextMenuSetupforAAC.exe`, it:
+
+1. **Checks for GBE Fork** → Found? Adds "GBE Fork" submenu
+2. **Checks for OG GSE** → Found? Adds "OG GSE" submenu
+3. **Both found?** → Installs BOTH under one parent menu!
+4. **Only one found?** → Just installs that one (no judgment)
+
+
+### Why Would You Want Both?
+
+- **GBE Fork** - Newer, actively maintained, more features, better for modern games
+- **OG GSE** - Tried and true, sometimes works better on older/quirky games
+
+Some games are picky. Having both options means you can try GBE Fork first, and if it acts up, switch to OG GSE without redownloading anything. It's like having both a Phillips and flathead screwdriver. Sure, one usually works, but sometimes you need the other.
+
+
+### Installation Scenarios
+
+| What You Have | What Gets Installed |
+|---------------|---------------------|
+| GBE-Fork only | Just GBE Fork submenu |
+| OG-GSE only | Just OG GSE submenu |
+| Both folders | Both submenus under one parent |
+| Neither (you goofed) | Error message and disappointment |
 
 ## ✨ Features
 
@@ -47,6 +130,7 @@ Right-click any Folder →
 
 It's like a filing cabinet, but for cracking games. Marie Kondo would be proud. Or horrified. Probably both.
 
+
 ### 🎛️ DLL Flavor Selection
 
 When cracking a DLL, you now get to choose your poison:
@@ -59,6 +143,7 @@ When cracking a DLL, you now get to choose your poison:
 
 Choose wisely. Or don't. We're not your mom.
 
+
 ### 💾 User Options System
 
 Tired of being called "gse orca" in every game? Now you can set your own identity!
@@ -68,6 +153,20 @@ The first time you generate steam settings, you'll be asked:
 - **Save Location** - Portable (saves with game) or AppData (the civilized choice)
 
 Your preferences are saved to `Resources/Tools/options.txt` and remembered forever. Or until you delete it. Whichever comes first.
+
+**Don't want to be asked every time?** When prompted, say "Y" to "Stop asking every time?" and it'll save `ask=0` to your options. From then on, it just uses your saved settings silently. Change your mind? Edit `options.txt` and set `ask=1` to re-enable prompts.
+
+```ini
+# Example options.txt
+account_name=YourCoolName
+portable=0
+local_save_path=saves
+saves_folder_name=GSE Saves
+
+# ask=1 prompts every time, ask=0 uses settings silently
+ask=0
+```
+
 
 ### 📁 GBE-Fork Format Steam Settings
 
@@ -87,23 +186,51 @@ steam_settings/
 
 All the comments. All the options. All the documentation you'll never read but will be grateful exists when something breaks.
 
+
 ### 🧊 Cold Client Loader (GBE-Fork Style)
 
 For those stubborn games that refuse to play nice:
 
-- Copies `steamclient_loader_x32.exe` OR `steamclient_loader_x64.exe` based on the architecture of the .exe
+- **Auto-detects 32-bit vs 64-bit** - Reads the EXE header and picks the right loader automatically
+- Copies `steamclient_loader_x32.exe` OR `steamclient_loader_x64.exe` (not both - less clutter!)
 - Includes `steamclient.dll`, `steamclient64.dll`
 - GameOverlayRenderer DLLs for that authentic fake-Steam experience
 - Auto-generates `ColdClientLoader.ini` with your settings
 
-Just pick steamclient_loader_64/32.exe when launching. It will work. Probably.
+```
+Detected architecture: 64
+Game is 64 bit. Using steamclient_loader_x64.exe
+```
 
-### 🔍 Steam App ID Detection
+Just run the loader when you want to play. It handles everything else.
 
-Same bloodhound-level hunting as before:
+
+### 🔍 Steam App ID Detection (Now With Fuzzy Search!)
+
+Same bloodhound-level hunting as before, but now with a brain upgrade:
+
 1. Searches the game folder for `steam_appid.txt`
-2. If not found, launches `ARMGDDN.App.ID.exe` to search our (OK, Steams) massive database
-3. If STILL not found, makes you type it in like a caveman
+2. If not found, launches `ARMGDDN.App.ID.exe` with **two input modes**:
+
+**Text Input = Fuzzy Search**
+```
+Enter: elden rign
+Finds:  ELDEN RING (AppID: 1245620)
+```
+Typos? No problem. Missing words? We'll figure it out. It's like Google, but for Steam games.
+
+**Number Input = Direct AppID**
+```
+Enter: 1245620
+Result: Found in database: ELDEN RING
+        Use AppID 1245620? (Y/N)
+```
+Already know the AppID? Just type it. We'll verify it exists (locally first, then online) and let you confirm. No searching, no waiting, no nonsense.
+
+The fuzzy search uses three-tier matching:
+- **Exact match** - Your search is in the game name
+- **Token match** - All your words appear somewhere in the name
+- **Fuzzy match** - Close enough (handles typos like "cyberpnuk" → "Cyberpunk 2077")
 
 We believe in you. Mostly.
 
@@ -122,9 +249,12 @@ Steamless integration, same as always. If a game has a Steam stub protecting it,
 1. Extract the whole `ARMGDDN.Autocracker.GBE-Fork` folder somewhere permanent
 2. Run `AIOContextMenuSetupforAAC.exe`
 3. Accept the warnings about the script talking (yes, it talks, deal with it)
-4. Right-click any EXE or DLL → ARMGDDN Autocracker → GBE Fork → Pick your poison. Or if you only use Windows Defender you can now right click on any folder and choose AAC Folder Exclusion to auto-add it. It even checks and makes sure you havent already excluded it.
-5. Follow the prompts
-6. Profit???
+4. **Wait for .NET Desktop Runtime to install** (silent, automatic, required for Exclusion Helper)
+5. Right-click any EXE or DLL → ARMGDDN Autocracker → GBE Fork → Pick your poison. Or if you only use Windows Defender you can now right click on any folder and choose AAC Folder Exclusion to auto-add it. It even checks and makes sure you havent already excluded it.
+6. Follow the prompts
+7. Profit???
+
+**Note:** The installer automatically installs .NET Desktop Runtime 10.x if needed. If you already have it, it skips in about 1-2 seconds. No user interaction required - it's completely silent.
 
 ### Option 2: Drag and Drop (The Lazy Way)
 
@@ -144,6 +274,7 @@ ARMGDDN.Main.exe "C:\Path\To\steam_api64.dll"
 
 - **Windows OS** - Linux users, you're on your own (but also, why do you need this?)
 - **.NET Framework 4.5+** - For Steamless
+- **.NET Desktop Runtime 10.x** - For Exclusion Helper (auto-installed by context menu setup)
 - **Basic knowledge of Steam game structure** - Know your EXEs from your DLLs
 - **Reading comprehension** - The prompts have words. Read them. Answer them. Use the force, Luke.
 
@@ -198,16 +329,16 @@ ARMGDDN.Autocracker.GBE-Fork/
     │       └── Steamless.Unpacker.Variant31.x86.dll
     │
     └── Tools/
-        ├── AAC_Autocracker.ico              # Icon for context menu
-        ├── AAC_Icon.png                     # PNG source for icon
-        ├── ExclusionHelper.exe              # Does the excluding
-        ├── ExclusionHelper.dll              # Helper for ExclusionHelper
-        ├── ExclusionHelper.pdb              # Helper for ExclusionHelper
-        ├── ExclusionHelper.deps.json        # Helper for ExclusionHelper
-        ├── ExclusionHelper.runtimeconfig.json
-        ├── generate_interfaces_file.exe     # For old games that need it
-        ├── nircmd.exe                       # For talking and cool stuff
-        └── options.txt                      # Your saved preferences
+        ├── AAC_Autocracker.ico                        # Icon for context menu
+        ├── AAC_Icon.png                               # PNG source for icon
+        ├── ExclusionHelper.exe                        # Does the excluding
+        ├── ExclusionHelper.dll                        # Helper for ExclusionHelper
+        ├── ExclusionHelper.pdb                        # Helper for ExclusionHelper
+        ├── ExclusionHelper.deps.json                  # Helper for ExclusionHelper
+        ├── ExclusionHelper.runtimeconfig.json         # Helper for ExclusionHelper
+        ├── generate_interfaces_file.exe               # For old games that need it
+        ├── nircmd.exe                                 # For talking and cool stuff
+        └── windowsdesktop-runtime-10.0.1-win-x64.exe  # .NET runtime (auto-installed)
 ```
 
 ## ⚠️ Disclaimer

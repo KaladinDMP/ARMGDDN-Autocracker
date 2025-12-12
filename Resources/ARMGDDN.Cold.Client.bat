@@ -162,60 +162,68 @@ set "iniFile=%droppedDir%ColdClientLoader.ini"
 
 echo Updating ColdClientLoader.ini...
 
-(
-echo [SteamClient]
-echo # Relative or absolute path to the game's exe
-echo exe=%fileName%%extension% 
-echo.
-echo # Optional: working directory for the exe (leave empty for exe's directory)
-echo ExeRunDir=
-echo.
-echo # Optional: command line arguments
-echo ExeCommandLine=%args%
-echo.
-echo # Steam AppID
-echo AppId=%appId%
-echo.
-echo # path to the steamclient dlls, both must be set, absolute paths or relative to the loader directory
-echo SteamClientDll=steamclient.dll
-echo SteamClient64Dll=steamclient64.dll
-echo.
-echo [Injection]
-echo # force inject steamclient dll instead of waiting for the app to load it
-echo ForceInjectSteamClient=0
-echo.
-echo # force inject GameOverlayRenderer dll instead of waiting for the app to load it
-echo ForceInjectGameOverlayRenderer=0
-echo.
-echo # path to a folder containing some dlls to inject into the app upon start, DllsToInjectFolder=extra_dlls
-echo DllsToInjectFolder=
-echo.
-echo # don't display an error message when a dll injection fails
-echo IgnoreInjectionError=1
-echo.
-echo # don't display an error message if the architecture of the loader is different from the app
-echo IgnoreLoaderArchDifference=0
-echo.
-echo [Persistence]
-echo # Persistence mode: 0=disabled, 1=loader spawns .exe, 2=loader does not spawn .exe
-echo SteamClientRemainLoaded=0
-echo.
-echo [Debug]
-echo # Enable debug logging (0=disabled, 1=enabled)
-echo ResumeByDebugger=0
-) > "%iniFile%"
+REM Delete existing ini first
+if exist "%iniFile%" del /f /q "%iniFile%"
 
-echo ColdClientLoader.ini updated!
-echo.
-echo Configuration:
-echo   exe=%fileName%%extension%
-if "%args%"=="" (
-    echo   ExeCommandLine=(none)
+REM Write line by line (handles spaces in path reliably)
+echo [SteamClient]> "%iniFile%"
+echo # Relative or absolute path to the game's exe>> "%iniFile%"
+echo exe=%fileName%%extension%>> "%iniFile%"
+echo # Optional: working directory for the exe (leave empty for exe's directory)>> "%iniFile%"
+echo ExeRunDir=>> "%iniFile%"
+echo # Optional: command line arguments>> "%iniFile%"
+echo ExeCommandLine=%args%>> "%iniFile%"
+echo # Steam AppID>> "%iniFile%"
+echo AppId=%appId%>> "%iniFile%"
+echo.>> "%iniFile%"
+echo # path to the steamclient dlls, both must be set, absolute paths or relative to the loader directory>> "%iniFile%"
+echo SteamClientDll=steamclient.dll>> "%iniFile%"
+echo SteamClient64Dll=steamclient64.dll>> "%iniFile%"
+echo.>> "%iniFile%"
+echo [Injection]>> "%iniFile%"
+echo # force inject steamclient dll instead of waiting for the app to load it>> "%iniFile%"
+echo ForceInjectSteamClient=0 >> "%iniFile%"
+echo.>> "%iniFile%"
+echo # force inject GameOverlayRenderer dll instead of waiting for the app to load it>> "%iniFile%"
+echo ForceInjectGameOverlayRenderer=0 >> "%iniFile%"
+echo.>> "%iniFile%"
+echo # path to a folder containing some dlls to inject into the app upon start, DllsToInjectFolder=extra_dlls>> "%iniFile%"
+echo DllsToInjectFolder=>> "%iniFile%"
+echo.>> "%iniFile%"
+echo # don't display an error message when a dll injection fails>> "%iniFile%"
+echo IgnoreInjectionError=1>> "%iniFile%"
+echo.>> "%iniFile%"
+echo # don't display an error message if the architecture of the loader is different from the app>> "%iniFile%"
+echo IgnoreLoaderArchDifference=0 >> "%iniFile%"
+echo.>> "%iniFile%"
+echo [Persistence]>> "%iniFile%"
+echo # Persistence mode: 0=disabled, 1=loader spawns .exe, 2=loader does not spawn .exe>> "%iniFile%"
+echo SteamClientRemainLoaded=0 >> "%iniFile%"
+echo.>> "%iniFile%"
+echo [Debug]>> "%iniFile%"
+echo # Enable debug logging (0=disabled, 1=enabled)>> "%iniFile%"
+echo ResumeByDebugger=0 >> "%iniFile%"
+
+REM Verify
+if exist "%iniFile%" (
+    echo.
+    echo ColdClientLoader.ini created successfully!
+    echo.
+    echo Configuration:
+    echo   exe=%fileName%%extension%
+    if "%args%"=="" (
+        echo   ExeCommandLine=^(none^)
+    ) else (
+        echo   ExeCommandLine=%args%
+    )
+    echo   AppId=%appId%
+    echo.
 ) else (
-    echo   ExeCommandLine=%args%
+    echo ERROR: Failed to create ColdClientLoader.ini
+    echo Path: %iniFile%
+    pause
+    exit /b 1
 )
-echo   AppId=%appId%
-echo.
 
 pause
 CLS

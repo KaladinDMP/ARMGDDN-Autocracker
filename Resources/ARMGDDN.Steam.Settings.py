@@ -35,15 +35,13 @@ def get_options_file_path():
     return os.path.join(base, "Tools", "options.txt")
 
 def load_user_options():
-    """
-    Load user options from Resources/Tools/options.txt
-    Returns dict with defaults if file doesn't exist
-    """
+    """Load user options from Resources/Tools/options.txt"""
     defaults = {
         'account_name': 'ARMGDDN',
         'portable': '0',
         'local_save_path': 'saves',
-        'saves_folder_name': 'GSE Saves'
+        'saves_folder_name': 'GSE Saves',
+        'ask': '1'  # 1=prompt every time, 0=use saved settings silently
     }
     
     options_file = get_options_file_path()
@@ -59,12 +57,16 @@ def load_user_options():
                     key, value = line.split('=', 1)
                     key = key.strip()
                     value = value.strip()
+                    # Handle old 'username' key for backwards compatibility
+                    if key == 'username':
+                        key = 'account_name'
                     if key in defaults:
                         defaults[key] = value
     except Exception as e:
         print(f"Warning: Could not load options.txt: {e}")
     
     return defaults
+
 
 def save_user_options(options):
     """Save user options to Resources/Tools/options.txt"""
@@ -80,13 +82,17 @@ def save_user_options(options):
             f.write("# ARMGDDN Autocracker User Options\n")
             f.write("# These settings are used when generating steam_settings\n")
             f.write("\n")
-            f.write(f"username={options['account_name']}\n")
+            f.write(f"account_name={options['account_name']}\n")
             f.write(f"portable={options['portable']}\n")
             f.write(f"local_save_path={options['local_save_path']}\n")
             f.write(f"saves_folder_name={options['saves_folder_name']}\n")
+            f.write("\n")
+            f.write("# ask=1 prompts you every time, ask=0 uses these settings silently\n")
+            f.write(f"ask={options.get('ask', '1')}\n")
         print(f"Options saved to: {options_file}")
     except Exception as e:
         print(f"Warning: Could not save options.txt: {e}")
+
 
 def prompt_user_options():
     """
@@ -94,6 +100,18 @@ def prompt_user_options():
     Returns updated options dict.
     """
     options = load_user_options()
+    
+    # If ask=0, just use saved settings silently
+    if options.get('ask', '1') == '0':
+        print()
+        print(f"Using saved settings (username: {options['account_name']})")
+        if options['portable'] == '1':
+            print(f"Save location: PORTABLE (./{options['local_save_path']}/)")
+        else:
+            print(f"Save location: AppData ({options['saves_folder_name']})")
+        print("(To change settings, edit ask=0 to ask=1 in Resources/Tools/options.txt)")
+        print()
+        return options
     
     print()
     print("============================================")
@@ -111,6 +129,12 @@ def prompt_user_options():
     
     if change != 'Y':
         print("Keeping current settings.")
+        print()
+        print("--------------------------------------------")
+        print("Don't want to be asked every time?")
+        print("Add ask=0 to Resources/Tools/options.txt")
+        print("--------------------------------------------")
+        print()
         return options
     
     print()
@@ -131,10 +155,10 @@ def prompt_user_options():
     print("--------------------------------------------")
     print()
     print("Options:")
-    print("  1. PORTABLE - 1 - saves in game folder (relative to DLL)")
+    print("  1. PORTABLE - saves in game folder (relative to DLL)")
     print("     WARNING: Saves stored with game files, not in AppData")
     print()
-    print("  0. PORTABLE - 0 - APPDATA - Saves in AppData folder (default, recommended)")
+    print("  0. APPDATA - Saves in AppData folder (default, recommended)")
     print("     Saves persist even if game is deleted/moved")
     print()
     
@@ -169,6 +193,17 @@ def prompt_user_options():
     else:
         print("Keeping current save location setting.")
     
+    # Ask about disabling future prompts
+    print()
+    print("--------------------------------------------")
+    disable_ask = input("Stop asking every time? (Y/N): ").strip().upper()
+    if disable_ask == 'Y':
+        options['ask'] = '0'
+        print("Got it! Will use these settings silently next time.")
+        print("(Change ask=0 to ask=1 in options.txt to re-enable prompts)")
+    else:
+        options['ask'] = '1'
+    
     # Save the options for next time
     save_user_options(options)
     
@@ -177,6 +212,7 @@ def prompt_user_options():
     print()
     
     return options
+
 
 def download_and_merge_steam_ids():
     """Download and merge Steam IDs from GitHub with hardcoded list."""

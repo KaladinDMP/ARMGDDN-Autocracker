@@ -3,6 +3,7 @@ import json
 import os
 import time
 import sys
+import difflib  # Built-in, no install needed
 
 
 def get_executable_path():
@@ -139,20 +140,90 @@ def is_game(app_id):
     return False
 
 
+def get_game_name_from_appid(app_id, app_dict):
+    """Look up game name from appid in local dictionary."""
+    app_id_str = str(app_id)
+    if app_id_str in app_dict:
+        return app_dict[app_id_str]['original_name']
+    return None
+
+
+def verify_appid_online(app_id):
+    """Verify appid exists and get name from Steam API."""
+    url = f"https://store.steampowered.com/api/appdetails?appids={app_id}"
+    try:
+        response = requests.get(url, timeout=15)
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            if str(app_id) in data and data[str(app_id)].get('success'):
+                return data[str(app_id)]['data'].get('name', 'Unknown')
+    except:
+        pass
+    return None
+
+
 def search_games(game_name, app_dict, non_game_apps):
+    """
+    Search for games with fuzzy matching.
+    Returns list of (app_id, original_name) tuples sorted by relevance.
+    """
     processed_name = preprocess_game_name(game_name)
     matching_games = []
 
     if not processed_name:
         return matching_games
 
+    search_tokens = processed_name.split()
+
     for app_id, app_data in app_dict.items():
-        processed_game_name = app_data['processed_name']
-        if app_id not in non_game_apps and processed_name in processed_game_name.lower():
-            matching_games.append((app_id, app_data['original_name']))
+        if app_id in non_game_apps:
+            continue
 
-    return matching_games
+        processed_game_name = app_data['processed_name'].lower()
+        game_tokens = processed_game_name.split()
 
+        # Method 1: Exact substring match (original behavior) - highest priority
+        if processed_name in processed_game_name:
+            matching_games.append((app_id, app_data['original_name'], 100))
+            continue
+
+        # Method 2: All search tokens found in game name (any order)
+        all_tokens_found = all(token in processed_game_name for token in search_tokens)
+        if all_tokens_found:
+            matching_games.append((app_id, app_data['original_name'], 90))
+            continue
+
+        # Method 3: Fuzzy match on individual tokens (TIGHTER)
+        if len(search_tokens) >= 1:
+            fuzzy_matches = 0
+            for search_token in search_tokens:
+                # Skip very short tokens for fuzzy matching (too many false positives)
+                if len(search_token) < 3:
+                    continue
+                    
+                # Check for close matches in game tokens (handles typos)
+                # Increased cutoff from 0.75 to 0.85
+                close = difflib.get_close_matches(search_token, game_tokens, n=1, cutoff=0.85)
+                if close:
+                    fuzzy_matches += 1
+                # Substring match only if search token is 4+ chars and matches START of game token
+                elif len(search_token) >= 4:
+                    for gt in game_tokens:
+                        if gt.startswith(search_token) or search_token.startswith(gt):
+                            fuzzy_matches += 0.75
+                            break
+
+            # Require at least 70% of tokens to match (was 50%)
+            if len(search_tokens) > 0:
+                match_ratio = fuzzy_matches / len(search_tokens)
+                if match_ratio >= 0.7:
+                    matching_games.append((app_id, app_data['original_name'], int(match_ratio * 80)))
+
+    # Sort by score (highest first) and return top 15 (was 25)
+    matching_games.sort(key=lambda x: x[2], reverse=True)
+
+    # Return without scores
+    return [(app_id, name) for app_id, name, score in matching_games[:15]]
 
 def remove_non_games(matching_games, non_game_apps):
     updated_matching_games = []
@@ -217,12 +288,67 @@ if not app_dict:
 
 # Normal interactive flow
 while True:
-    game_name = input("Enter the game name (or 'x' to exit): ")
-    if game_name.lower() == 'x':
+    print()
+    print("============================================")
+    print("  Enter game name for fuzzy search")
+    print("  OR enter AppID directly (numbers only)")
+    print("============================================")
+    user_input = input("Game name or AppID (or 'x' to exit): ").strip()
+    
+    if user_input.lower() == 'x':
         print("Exiting the script.")
         break
 
-    print("Searching for matching games...")
+    # Check if input is a number (direct appid)
+    if user_input.isdigit():
+        app_id = user_input
+        print(f"Detected AppID: {app_id}")
+        
+        # Try to find name in local dictionary first
+        game_name = get_game_name_from_appid(app_id, app_dict)
+        
+        if game_name:
+            print(f"Found in database: {game_name}")
+            confirm = input(f"Use AppID {app_id} ({game_name})? (Y/N): ").strip().upper()
+            if confirm == 'Y' or confirm == '':
+                write_steam_appid_file(app_id)
+                save_non_game_apps(non_game_apps)
+                print("Exiting the script.")
+                sys.exit(0)
+            else:
+                print("Cancelled. Try again.")
+                continue
+        else:
+            # Not in local dict, verify online
+            print("Not in local database, checking Steam...")
+            online_name = verify_appid_online(app_id)
+            if online_name:
+                print(f"Found on Steam: {online_name}")
+                confirm = input(f"Use AppID {app_id} ({online_name})? (Y/N): ").strip().upper()
+                if confirm == 'Y' or confirm == '':
+                    write_steam_appid_file(app_id)
+                    save_non_game_apps(non_game_apps)
+                    print("Exiting the script.")
+                    sys.exit(0)
+                else:
+                    print("Cancelled. Try again.")
+                    continue
+            else:
+                # Can't verify, ask user if they want to use it anyway
+                print(f"Could not verify AppID {app_id} online.")
+                confirm = input(f"Use AppID {app_id} anyway? (Y/N): ").strip().upper()
+                if confirm == 'Y':
+                    write_steam_appid_file(app_id)
+                    save_non_game_apps(non_game_apps)
+                    print("Exiting the script.")
+                    sys.exit(0)
+                else:
+                    print("Cancelled. Try again.")
+                    continue
+
+    # Not a number, do fuzzy search
+    game_name = user_input
+    print("Searching for matching games (fuzzy search enabled)...")
     matching_games = search_games(game_name, app_dict, non_game_apps)
 
     if matching_games:
@@ -230,12 +356,15 @@ while True:
         updated_matching_games, non_game_apps = remove_non_games(matching_games, non_game_apps)
 
         if updated_matching_games:
+            print()
             print("Matching games found:")
+            print("-" * 50)
             for index, (app_id, gn) in enumerate(updated_matching_games, start=1):
-                print(f"{index}. App ID: {app_id}, Game Name: {gn}")
+                print(f"{index}. {gn} (AppID: {app_id})")
 
-            print(f"{len(updated_matching_games) + 1}. None of these are right, try again")
-            print(f"{len(updated_matching_games) + 2}. None of these are right, quit and enter manually")
+            print("-" * 50)
+            print(f"{len(updated_matching_games) + 1}. None of these - search again")
+            print(f"{len(updated_matching_games) + 2}. None of these - quit")
 
             while True:
                 selection = input("Enter the number of the correct game: ")
@@ -244,27 +373,27 @@ while True:
                     selection = int(selection)
                     if 1 <= selection <= len(updated_matching_games):
                         selected_app_id, selected_game_name = updated_matching_games[selection - 1]
-                        print(f"Selected Game: App ID: {selected_app_id}, Game Name: {selected_game_name}")
+                        print(f"Selected: {selected_game_name} (AppID: {selected_app_id})")
                         write_steam_appid_file(selected_app_id)
                         save_non_game_apps(non_game_apps)
                         print("Exiting the script.")
                         sys.exit(0)
                     elif selection == len(updated_matching_games) + 1:
-                        print("None of these are right. I want to try to search again.")
+                        print("Searching again...")
                         break
                     elif selection == len(updated_matching_games) + 2:
-                        print("None of these are right. I want to quit and just enter the appid manually.")
+                        print("Exiting - enter the AppID manually.")
                         sys.exit(0)
                     else:
                         print("Invalid selection. Please try again.")
                 except ValueError:
                     print("Invalid input. Please enter a valid number.")
         else:
-            print("No matching games found.")
+            print("No matching games found after verification.")
+            print("Tip: Try a different spelling, or enter the AppID directly if you know it.")
     else:
         print("No matching games found.")
-
-    print()
+        print("Tip: Try fewer words, different spelling, or enter the AppID directly.")
 
 print("Saving non-game app IDs...")
 save_non_game_apps(non_game_apps)
