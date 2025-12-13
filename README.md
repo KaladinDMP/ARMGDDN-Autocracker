@@ -6,7 +6,6 @@
 
 Welcome to the GBE Fork Edition! We took everything you loved (and tolerated) about the original ARMGDDN Autocracker and gave it a shiny new engine. Same chaos, better emulation. If the OG Goldberg version was a trusty Honda Civic, this is the turbocharged Type R. Still gets you there, just... fancier.
 
-
 ## 🆕 What's Different From OG Goldberg Steam Emu?
 
 Glad you asked! (Even if you didn't, I'm telling you anyway.)
@@ -31,13 +30,11 @@ Glad you asked! (Even if you didn't, I'm telling you anyway.)
 - **🔓 Steam Stub Removal** - Integrated Steamless removes Steam's DRM protection from executables with one click.
 - **🎮 Steam Settings Generator** - Automatically fetches achievements, stats, DLC info, and images from Steam's servers and creates properly formatted config files.
 
-
 ### Smart Features
 - **🔍 Fuzzy Game Search** - Don't know the exact game name? Type "cyberpnuk" and it'll find "Cyberpunk 2077". Or just enter the AppID directly if you know it.
 - **🏗️ Auto Architecture Detection** - Cold Client Loader reads the EXE header and picks the correct 32-bit or 64-bit loader automatically.
 - **💾 Persistent User Settings** - Set your username and save location once, use it forever. Set `ask=0` to skip prompts entirely.
 - **📁 Smart AppID Detection** - Searches game folders for existing `steam_appid.txt` before asking you to find it.
-
 
 ### Installation & Integration  
 - **🖱️ Nested Context Menus** - Clean, 7-Zip style nested menus. All options under one parent menu, not scattered everywhere.
@@ -45,22 +42,18 @@ Glad you asked! (Even if you didn't, I'm telling you anyway.)
 - **🛡️ Windows Defender Integration** - Right-click any folder → "AAC Folder Exclude" to add it to Defender exclusions. No more false positives.
 - **📦 Silent .NET Install** - Required runtime installs automatically and silently during context menu setup.
 
-
 ### GBE Fork Specific
-- **🎨 Overlay Support (ExOL)** - Optional builds with working SHIFT+TAB overlay and achievement popups.
-- **📝 Full Config Templates** - Generates `configs.app.ini` and `configs.user.ini` with all GBE Fork options and documentation included.
+- **🎨 Overlay Support (ExOL)** - Optional builds with working SHIFT+TAB overlay and achievement popups. Prompts you to enable after DLL replacement.
+- **📝 Full Config Templates** - Generates `configs.app.ini`, `configs.user.ini`, and `configs.overlay.ini.disabled` with all GBE Fork options and documentation included.
 - **🖼️ Achievement Images** - Downloads achievement icons to the correct `images/` folder (not `achievement_images/` like OG).
 - **📊 Proper JSON Formats** - Stats as `stats.json`, achievements as `achievements.json` - the way GBE Fork expects them.
-
 
 ### VR Support
 - **🥽 VD Batmaker** - Creates batch files to launch cracked games through Virtual Desktop Streamer for VR headset users.
 
-
 ## 🤝 Works With OG GSE v2.0.0!
 
 This GBE Fork edition is designed to play nice with the **newly updated [ARMGDDN Autocracker - OG GSE v2.0.0](https://github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE)**! 
-
 
 ### How It Works
 
@@ -73,11 +66,8 @@ ARMGDDN.Autocracker/                    # Parent folder (can be named anything)
 │   └── ...
 │
 ├── ARMGDDN.Autocracker.OG-GSE/         # The OG (v2.0.0+)
-│   ├── ARMGDDN.Main.exe
-│   └── ...
-│
-├── AIOContextMenuSetupforAAC.exe       # Shared installer (lives in parent)
-└── AIOContextMenuUninstallerforAAC.exe # Shared uninstaller
+    ├── ARMGDDN.Main.exe
+    └── ...
 ```
 
 When you run `AIOContextMenuSetupforAAC.exe`, it:
@@ -87,14 +77,12 @@ When you run `AIOContextMenuSetupforAAC.exe`, it:
 3. **Both found?** → Installs BOTH under one parent menu!
 4. **Only one found?** → Just installs that one (no judgment)
 
-
 ### Why Would You Want Both?
 
 - **GBE Fork** - Newer, actively maintained, more features, better for modern games
 - **OG GSE** - Tried and true, sometimes works better on older/quirky games
 
 Some games are picky. Having both options means you can try GBE Fork first, and if it acts up, switch to OG GSE without redownloading anything. It's like having both a Phillips and flathead screwdriver. Sure, one usually works, but sometimes you need the other.
-
 
 ### Installation Scenarios
 
@@ -130,7 +118,6 @@ Right-click any Folder →
 
 It's like a filing cabinet, but for cracking games. Marie Kondo would be proud. Or horrified. Probably both.
 
-
 ### 🎛️ DLL Flavor Selection
 
 When cracking a DLL, you now get to choose your poison:
@@ -139,10 +126,17 @@ When cracking a DLL, you now get to choose your poison:
 2. **Experimental with Overlay (ExOL)** - The spicy option!
    - In-game overlay (SHIFT+TAB, just like the real thing!)
    - Achievement notifications that pop up and make you feel special
+   - FPS counter, playtime tracking
    - Blocks non-LAN connections (for the paranoid among us)
 
 Choose wisely. Or don't. We're not your mom.
 
+**If you choose ExOL**, after generating steam settings you'll be asked:
+1. "Enable the overlay?" → Yes/No
+2. If Yes: Warning about potential crashes → OK/Cancel
+3. If OK: `configs.overlay.ini.disabled` gets renamed to `configs.overlay.ini` and the overlay is active!
+
+**Overlay not working? Game crashing?** Just rename or delete `configs.overlay.ini` in the `steam_settings` folder. The overlay will be disabled and you can still play with all other GBE features.
 
 ### 💾 User Options System
 
@@ -167,7 +161,6 @@ saves_folder_name=GSE Saves
 ask=0
 ```
 
-
 ### 📁 GBE-Fork Format Steam Settings
 
 The `ARMGDDN.Steam.Settings.exe` now generates proper GBE-Fork format configs:
@@ -186,6 +179,35 @@ steam_settings/
 
 All the comments. All the options. All the documentation you'll never read but will be grateful exists when something breaks.
 
+### 🎨 Overlay Configuration
+
+The overlay config is generated as `configs.overlay.ini.disabled` by default. This is intentional - the overlay can cause crashes in some games, so we don't enable it automatically.
+
+**To enable the overlay:**
+- Rename `configs.overlay.ini.disabled` → `configs.overlay.ini`
+- Or just say "Yes" when prompted after using ExOL DLLs
+
+**What's in the overlay config?**
+```ini
+[overlay::general]
+enable_experimental_overlay=1       # Master switch
+disable_achievement_notification=0  # Show achievement popups
+disable_friend_notification=0       # Show friend notifications
+overlay_always_show_fps=0           # FPS counter (set to 1 to enable)
+overlay_always_show_playtime=0      # Playtime display
+
+[overlay::appearance]
+Font_Size=20.0                      # UI font size
+Icon_Size=64.0                      # Achievement icon size
+PosAchievement=bot_right            # Where achievements appear
+Notification_Duration_Achievement=7.0  # How long popups stay
+# ... and many more customization options
+```
+
+**Overlay controls:**
+- **SHIFT+TAB** - Open/close the overlay
+- Achievement popups appear automatically when you unlock them
+- FPS/playtime can be set to always show
 
 ### 🧊 Cold Client Loader (GBE-Fork Style)
 
@@ -203,7 +225,6 @@ Game is 64 bit. Using steamclient_loader_x64.exe
 ```
 
 Just run the loader when you want to play. It handles everything else.
-
 
 ### 🔍 Steam App ID Detection (Now With Fuzzy Search!)
 
@@ -372,7 +393,7 @@ Standing on the shoulders of giants (and some regular-sized people too):
 - **ARMGDDN Autocracker - OG-GSE**: [github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE](https://github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE)
 - **ARMGDDN Autocracker - GBE-Fork**: [github.com/KaladinDMP/ARMGDDN-Autocracker-GBE-Fork](https://github.com/KaladinDMP/ARMGDDN-Autocracker-GBE-Fork)
 - **cs.rin.ru Thread for the ARMGDDN Autocracker - OG-GSE**: [cs.rin.ru/forum/viewtopic.php?f=20&t=141375](https://cs.rin.ru/forum/viewtopic.php?f=20&t=141375)
-- **cs.rin.ru Thread for the ARMGDDN Autocracker - GBE-Fork**: [Coming Soon™]
+- **cs.rin.ru Thread for the ARMGDDN Autocracker - GBE-Fork**: [cs.rin.ru/forum/viewtopic.php?f=20&t=153779(https://cs.rin.ru/forum/viewtopic.php?f=20&t=153779)
 
 ## 🌟 Support
 
