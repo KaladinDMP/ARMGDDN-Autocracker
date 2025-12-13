@@ -194,10 +194,44 @@ if "%useExperimental%"=="1" (
     echo Type: Regular
 )
 echo.
+
+REM If ExOL was selected, ask about enabling overlay
+set "overlayEnabled=0"
+if "%useExperimental%"=="1" (
+    REM First question - Enable overlay?
+    for /f %%A in ('powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('Enable the overlay?','Overlay Configuration','YesNo','Question')"') do set "answer1=%%A"
+    
+    if /i "!answer1!"=="Yes" (
+        REM User said Yes - show warning
+        for /f %%B in ('powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('The overlay can sometimes cause crashes. If the game crashes, you can delete configs.overlay.ini or rename it to disable the overlay easily.','Warning','OKCancel','Warning')"') do set "answer2=%%B"
+        
+        if /i "!answer2!"=="OK" (
+            REM User confirmed - rename the file
+            set "overlayFile=%droppedDir%steam_settings\configs.overlay.ini.disabled"
+            if exist "!overlayFile!" (
+                ren "!overlayFile!" "configs.overlay.ini"
+                echo Overlay ENABLED - configs.overlay.ini created
+                set "overlayEnabled=1"
+                powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('Overlay enabled! Press SHIFT+TAB in game to open it.','Overlay Enabled','OK','Information')"
+            ) else (
+                echo WARNING: configs.overlay.ini.disabled not found in steam_settings folder
+            )
+        ) else (
+            echo Overlay remains DISABLED
+        )
+    ) else (
+        echo Overlay remains DISABLED
+    )
+)
+
+echo.
 echo Next steps:
 echo   1. Check steam_settings folder was created
 echo   2. Copy steam_settings to game directory if needed
 echo   3. Run the game!
+if "!overlayEnabled!"=="1" (
+    echo   4. If the game crashes, rename or delete configs.overlay.ini to disable the overlay
+)
 echo.
 pause
 exit /b 0
