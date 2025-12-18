@@ -130,19 +130,58 @@ if "%bitness%"=="32" (
     echo Game is 32 bit. Using steamclient_loader_x32.exe
     set "chosenLoader=%loader32%"
     set "discardLoader=%loader64%"
+    set "loaderName=%fileName%CCLx32.exe"
 ) else (
     echo Game is 64 bit or unknown. Using steamclient_loader_x64.exe
     set "chosenLoader=%loader64%"
     set "discardLoader=%loader32%"
+    set "loaderName=%fileName%CCLx64.exe"
 )
 
-copy /y "%clientDir%\%chosenLoader%" "%droppedDir%" >nul
+REM Copy and rename the loader
+copy /y "%clientDir%\%chosenLoader%" "%droppedDir%!loaderName!" >nul
 
-if exist "%droppedDir%\%discardLoader%" del /f /q "%droppedDir%\%discardLoader%"
+REM Delete both original loaders from game dir (we renamed it)
+if exist "%droppedDir%\%loader32%" del /f /q "%droppedDir%\%loader32%"
+if exist "%droppedDir%\%loader64%" del /f /q "%droppedDir%\%loader64%"
 
-echo Loader in use: %chosenLoader%
+echo Loader renamed to: !loaderName!
 echo.
 
+REM Extract icon from game EXE and apply to loader
+echo Extracting icon from game executable...
+set "ffmpeg=%batchDir%Tools\ffmpeg.exe"
+set "rcedit=%batchDir%Tools\rcedit-x64.exe"
+set "tempPng=%TEMP%\aac_temp_icon.png"
+set "tempIco=%TEMP%\aac_temp_icon.ico"
+
+if exist "%ffmpeg%" if exist "%rcedit%" (
+    REM Extract icon to PNG using PowerShell
+    powershell -Command "Add-Type -AssemblyName System.Drawing; $icon = [System.Drawing.Icon]::ExtractAssociatedIcon('%droppedFile%'); $icon.ToBitmap().Save('%tempPng%')"
+    
+    if exist "!tempPng!" (
+        REM Convert PNG to ICO using ffmpeg
+        "%ffmpeg%" -y -i "!tempPng!" "!tempIco!" >nul 2>&1
+        
+        if exist "!tempIco!" (
+            REM Apply icon to loader using rcedit
+            "%rcedit%" "%droppedDir%!loaderName!" --set-icon "!tempIco!" >nul 2>&1
+            if not errorlevel 1 (
+                echo Icon applied successfully!
+            ) else (
+                echo Warning: Could not apply icon, continuing anyway...
+            )
+            del "!tempIco!" >nul 2>&1
+        ) else (
+            echo Warning: Could not convert icon, continuing anyway...
+        )
+        del "!tempPng!" >nul 2>&1
+    ) else (
+        echo Warning: Could not extract icon, continuing anyway...
+    )
+) else (
+    echo Note: ffmpeg or rcedit not found in Tools folder, skipping icon extraction
+)
 PAUSE
 CLS
 echo.
@@ -251,8 +290,15 @@ echo ============================================
 echo   Cold Client Setup Complete
 echo ============================================
 echo.
+echo Files created:
+echo   - !loaderName! (with game icon)
+echo   - ColdClientLoader.ini
+echo   - steamclient.dll / steamclient64.dll
+echo   - GameOverlayRenderer.dll / GameOverlayRenderer64.dll
+echo   - steam_settings/ folder
+echo.
 echo To launch the game, run:
-echo   %chosenLoader%
+echo  !loaderName!
 echo.
 pause
 exit /b 0

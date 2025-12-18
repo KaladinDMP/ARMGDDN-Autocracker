@@ -17,7 +17,7 @@ Glad you asked! (Even if you didn't, I'm telling you anyway.)
 | DLC config | `DLC.txt` | `configs.app.ini` |
 | User settings | Scattered text files | `configs.user.ini` |
 | Overlay support | Yes! (ExOL builds, optional) | Yes! (ExOL builds, optional) |
-| Cold Client Loader | `steamclient_loader.exe` | `steamclient_loader_x32.exe` / `steamclient_loader_x64.exe` |
+| Cold Client Loader | `steamclient_loader.exe` | `ExeNameCCLx32.exe` / `ExeNameCCLx64.exe` |
 | Active development | Archived | Actively maintained |
 
 **TL;DR:** GBE Fork is the spiritual successor to Goldberg's emulator, with more features, better compatibility, and someone actually fixing bugs. Revolutionary concept, I know.
@@ -26,13 +26,14 @@ Glad you asked! (Even if you didn't, I'm telling you anyway.)
 
 ### Core Functionality
 - **🔄 One-Click DLL Replacement** - Right-click any `steam_api.dll` or `steam_api64.dll`, select Autocracker, and it's replaced with the GBE Fork emulator. Done.
-- **🧊 Cold Client Loader Setup** - For games that need DLL injection instead of replacement. Auto-detects 32/64-bit architecture and configures everything.
+- **🧊 Cold Client Loader Setup** - For games that need DLL injection instead of replacement. Auto-detects 32/64-bit architecture, renames the loader with the exe name, and applies the game's icon!
 - **🔓 Steam Stub Removal** - Integrated Steamless removes Steam's DRM protection from executables with one click.
 - **🎮 Steam Settings Generator** - Automatically fetches achievements, stats, DLC info, and images from Steam's servers and creates properly formatted config files.
 
 ### Smart Features
 - **🔍 Fuzzy Game Search** - Don't know the exact game name? Type "cyberpnuk" and it'll find "Cyberpunk 2077". Or just enter the AppID directly if you know it.
 - **🏗️ Auto Architecture Detection** - Cold Client Loader reads the EXE header and picks the correct 32-bit or 64-bit loader automatically.
+- **🎨 Game Icon Extraction** - Cold Client Loader extracts your game's icon and applies it to the renamed loader. Pretty AND functional.
 - **💾 Persistent User Settings** - Set your username and save location once, use it forever. Set `ask=0` to skip prompts entirely.
 - **📁 Smart AppID Detection** - Searches game folders for existing `steam_appid.txt` before asking you to find it.
 
@@ -173,8 +174,9 @@ steam_settings/
 ├── images/
 │   ├── achievement_icon1.jpg
 │   └── achievement_icon2.jpg
-├── configs.app.ini      (DLC, app settings)
-└── configs.user.ini     (username, save location)
+├── configs.app.ini                 (DLC, app settings)
+├── configs.user.ini                (username, save location)
+└── configs.overlay.ini.disabled    (overlay settings - rename to enable)
 ```
 
 All the comments. All the options. All the documentation you'll never read but will be grateful exists when something breaks.
@@ -214,7 +216,8 @@ Notification_Duration_Achievement=7.0  # How long popups stay
 For those stubborn games that refuse to play nice:
 
 - **Auto-detects 32-bit vs 64-bit** - Reads the EXE header and picks the right loader automatically
-- Copies `steamclient_loader_x32.exe` OR `steamclient_loader_x64.exe` (not both - less clutter!)
+- **Smart Loader Renaming** - Renames the loader to `ExeNameCCLx64.exe` or `ExeNameCCLx32.exe` so you know what it's for
+- **Game Icon Extraction** - Extracts the icon from your game EXE and applies it to the loader. Your game library stays pretty!
 - Includes `steamclient.dll`, `steamclient64.dll`
 - GameOverlayRenderer DLLs for that authentic fake-Steam experience
 - Auto-generates `ColdClientLoader.ini` with your settings
@@ -222,9 +225,11 @@ For those stubborn games that refuse to play nice:
 ```
 Detected architecture: 64
 Game is 64 bit. Using steamclient_loader_x64.exe
+Loader renamed to: Cyberpunk 2077CCLx64.exe
+Icon applied successfully!
 ```
 
-Just run the loader when you want to play. It handles everything else.
+The loader shows up in your game folder with the game's own icon, named after the exe its pointing to. No more guessing which .exe to use. Just run it and play.
 
 ### 🔍 Steam App ID Detection (Now With Fuzzy Search!)
 
@@ -325,7 +330,7 @@ ARMGDDN.Autocracker.GBE-Fork/
     │   └── ARMGDDN.App.ID.exe          # App ID finder
     │
     ├── Client/
-    │   ├── ColdClientLoader.ini        # Where your options live
+    │   ├── ColdClientLoader.ini        # Template config
     │   ├── GameOverlayRenderer.dll     # Helps with the Overlay
     │   ├── GameOverlayRenderer64.dll   # Helps with the Overlay
     │   ├── steamclient.dll             # Required for cold client loader
@@ -357,8 +362,11 @@ ARMGDDN.Autocracker.GBE-Fork/
         ├── ExclusionHelper.pdb                        # Helper for ExclusionHelper
         ├── ExclusionHelper.deps.json                  # Helper for ExclusionHelper
         ├── ExclusionHelper.runtimeconfig.json         # Helper for ExclusionHelper
+        ├── ffmpeg.exe                                 # For icon conversion (PNG→ICO)
         ├── generate_interfaces_file.exe               # For old games that need it
         ├── nircmd.exe                                 # For talking and cool stuff
+        ├── options.txt                                # Your saved user preferences
+        ├── rcedit-x64.exe                             # For applying icons to EXEs
         └── windowsdesktop-runtime-10.0.1-win-x64.exe  # .NET runtime (auto-installed)
 ```
 
@@ -383,6 +391,9 @@ Standing on the shoulders of giants (and some regular-sized people too):
 - **[atom0s](https://github.com/atom0s/Steamless)** - Steamless, because Steam stubs are annoying
 - **[Sak32009](https://github.com/Sak32009/steam_py_fork)** - Steam module fixes that made everything faster
 - **[SteamLadder](https://steamladder.com/)** - API access for finding achievement/DLC data
+- **[NirSoft/NirCmd](https://www.nirsoft.net/utils/nircmd.html)** - For helping make the context menu install less boring
+- **[electron/rcedit](https://github.com/electron/rcedit)** - For making icon embedding possible
+- **[ffmpeg](https://www.ffmpeg.org/)** - For making .png to .ico easily! Who knew it could do that?! I sure didn't.
 - **George Jefferson** - For telling me when I'm wrong (frequently)
 - **You** - For reading this far. Gold star. ⭐
 
@@ -393,7 +404,7 @@ Standing on the shoulders of giants (and some regular-sized people too):
 - **ARMGDDN Autocracker - OG-GSE**: [github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE](https://github.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE)
 - **ARMGDDN Autocracker - GBE-Fork**: [github.com/KaladinDMP/ARMGDDN-Autocracker-GBE-Fork](https://github.com/KaladinDMP/ARMGDDN-Autocracker-GBE-Fork)
 - **cs.rin.ru Thread for the ARMGDDN Autocracker - OG-GSE**: [cs.rin.ru/forum/viewtopic.php?f=20&t=141375](https://cs.rin.ru/forum/viewtopic.php?f=20&t=141375)
-- **cs.rin.ru Thread for the ARMGDDN Autocracker - GBE-Fork**: [cs.rin.ru/forum/viewtopic.php?f=20&t=153779(https://cs.rin.ru/forum/viewtopic.php?f=20&t=153779)
+- **cs.rin.ru Thread for the ARMGDDN Autocracker - GBE-Fork**: [cs.rin.ru/forum/viewtopic.php?f=20&t=153779](https://cs.rin.ru/forum/viewtopic.php?f=20&t=153779)
 
 ## 🌟 Support
 
