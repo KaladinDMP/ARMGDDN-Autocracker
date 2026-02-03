@@ -51,13 +51,8 @@ def generate_stats_achievements(schema, config_directory):
                     achievements_out += [out]
             else:
                 # This is a stat
-                stat_name = stat.get('name')
-                if not stat_name:
-                    print(f"Warning: Skipping stat with no name field")
-                    continue
-                    
                 out = {}
-                out['name'] = stat_name
+                out['name'] = stat['name']
                 
                 # Determine stat type
                 if stat['type'] == STAT_TYPE_INT or stat['type'] == 'INT':

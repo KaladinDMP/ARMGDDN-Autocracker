@@ -1,25 +1,3 @@
-@ECHO OFF
-REM BFCPEOPTIONSTART
-REM Advanced BAT to EXE Converter www.BatToExeConverter.com
-REM BFCPEEXE=
-REM BFCPEICON=
-REM BFCPEICONINDEX=-1
-REM BFCPEEMBEDDISPLAY=0
-REM BFCPEEMBEDDELETE=1
-REM BFCPEADMINEXE=0
-REM BFCPEINVISEXE=0
-REM BFCPEVERINCLUDE=0
-REM BFCPEVERVERSION=1.0.0.0
-REM BFCPEVERPRODUCT=Product Name
-REM BFCPEVERDESC=Product Description
-REM BFCPEVERCOMPANY=Your Company
-REM BFCPEVERCOPYRIGHT=Copyright Info
-REM BFCPEWINDOWCENTER=1
-REM BFCPEDISABLEQE=0
-REM BFCPEWINDOWHEIGHT=30
-REM BFCPEWINDOWWIDTH=120
-REM BFCPEWTITLE=Window Title
-REM BFCPEOPTIONEND
 @echo off
 setlocal EnableDelayedExpansion
 
@@ -31,11 +9,11 @@ setlocal EnableDelayedExpansion
 ::  But masterDir will be:
 ::    ...\ARMGDDN.Autocracker\
 :: -------------------------------------------------------
-set "scriptDir=%~dp0"
-set "masterDir=%scriptDir%.."
 
-:: Normalize masterDir to full path, no trailing slash
-for %%A in ("%masterDir%") do set "masterDir=%%~fA"
+for %%A in ("%~dp0.") do set "masterDir=%%~dpA"
+set "masterDir=%masterDir:~0,-1%"
+set "masterDir=%masterDir:\\=\%"
+
 
 :: Version dirs (no extra backslashes)
 set "ogDir=%masterDir%\ARMGDDN.Autocracker.OG-GSE"
