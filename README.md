@@ -394,6 +394,7 @@ Standing on the shoulders of giants (and some regular-sized people too):
 - **[NirSoft/NirCmd](https://www.nirsoft.net/utils/nircmd.html)** - For helping make the context menu install less boring
 - **[electron/rcedit](https://github.com/electron/rcedit)** - For making icon embedding possible
 - **[ffmpeg](https://www.ffmpeg.org/)** - For making .png to .ico easily! Who knew it could do that?! I sure didn't.
+- **[EndzE](https://github.com/Detanup01/gbe_fork_tools/issues/9#issuecomment-3795927921)** - For the fix i needed to impliment in v1.0.2
 - **George Jefferson** - For telling me when I'm wrong (frequently)
 - **You** - For reading this far. Gold star. ⭐
 
