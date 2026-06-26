@@ -9,6 +9,10 @@ import urllib.error
 import threading
 import queue
 
+# Add Tools/ to path so imports work both when run directly and when frozen
+_base = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(_base, 'Tools'))
+
 HARDCODED_STEAM_IDS = [
     76561198017975643, 76561198028121353, 76561197979911851, 76561198355953202,
     76561198217186687, 76561197993544755, 76561198001237877, 76561198237402290,
@@ -270,8 +274,6 @@ from steam.enums.common import EResult
 from steam.enums.emsg import EMsg
 from steam.core.msg import MsgProto
 
-prompt_for_unavailable = True
-
 if len(sys.argv) < 2:
     print("\nUsage: ARMGDDN.Steam.Settings.exe APPID\n\nExample: ARMGDDN.Steam.Settings.exe 480\n")
     sys.exit(1)
@@ -282,68 +284,13 @@ for id in sys.argv[1:]:
 
 client = SteamClient()
 
-def steam_login():
-    global prompt_for_unavailable
-
-    if len(USERNAME) == 0 or len(PASSWORD) == 0:
-        client.cli_login()
-        return
-
-    # Try the old-style credential login first (works with older steam library builds).
-    # If Steam rejects it with InvalidPassword due to the new IAuthenticationService
-    # requirement, fall back to cli_login() which uses the new auth flow and caches
-    # a refresh token so subsequent runs are silent.
-    result = client.login(USERNAME, password=PASSWORD)
-    auth_code, two_factor_code = None, None
-
-    while result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode,
-                     EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch,
-                     EResult.TryAnotherCM, EResult.ServiceUnavailable,
-                     EResult.InvalidPassword):
-
-        if result == EResult.InvalidPassword:
-            # Steam deprecated the old CM login flow. The password is correct but Steam
-            # requires the new IAuthenticationService flow. cli_login() handles that and
-            # caches a refresh token so future runs don't need to prompt.
-            print()
-            print("============================================")
-            print("  Steam Auth: Switching to new login flow")
-            print("============================================")
-            print("Auto-login rejected by Steam (auth system update, not wrong password).")
-            print("Switching to new auth flow via cli_login...")
-            print()
-            try:
-                # Newer steam library versions accept username+password here and handle
-                # the new auth flow silently, then cache a refresh token.
-                client.cli_login(username=USERNAME, password=PASSWORD)
-            except TypeError:
-                # Older library: cli_login() takes no args, will prompt interactively.
-                print(f"Log in as '{USERNAME}' when prompted.")
-                client.cli_login()
-            return
-
-        elif result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode):
-            prompt = ("Enter email code: " if result == EResult.AccountLogonDenied else
-                      "Incorrect code. Enter email code: ")
-            auth_code, two_factor_code = input(prompt), None
-        elif result in (EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch):
-            prompt = ("Enter 2FA code: " if result == EResult.AccountLoginDeniedNeedTwoFactor else
-                      "Incorrect code. Enter 2FA code: ")
-            auth_code, two_factor_code = None, input(prompt)
-        elif result in (EResult.TryAnotherCM, EResult.ServiceUnavailable):
-            if prompt_for_unavailable and result == EResult.ServiceUnavailable:
-                while True:
-                    answer = input("Steam is down. Keep retrying? [y/n]: ").lower()
-                    if answer in 'yn':
-                        break
-                prompt_for_unavailable = False
-                if answer == 'n':
-                    break
-            client.reconnect(maxdelay=15)
-
-        result = client.login(USERNAME, PASSWORD, None, auth_code, two_factor_code)
-
-steam_login()
+print("Connecting to Steam (anonymous)...")
+result = client.anonymous_login()
+if result != EResult.OK:
+    print(f"Steam connection failed: {result}")
+    print("Check your internet connection and try again.")
+    sys.exit(1)
+print("Connected.")
 
 
 def get_stats_schema(client, game_id, owner_id):
@@ -409,7 +356,7 @@ def generate_achievement_stats(client, game_id, output_directory):
         return False
     
     stats_generated = False
-    steam_id_list = TOP_OWNER_IDS + [client.steam_id]
+    steam_id_list = TOP_OWNER_IDS
     
     for x in steam_id_list:
         out = get_stats_schema(client, game_id, x)
@@ -633,7 +580,6 @@ def generate_configs_user_ini(output_directory, options):
     """
     ini_path = os.path.join(output_directory, "configs.user.ini")
     
-    # Build the ini content matching exact template format
     lines = []
     
     # [user::general] section
@@ -909,7 +855,7 @@ for appid in appids:
     dlc_list, depot_app_list = get_dlc(game_info)
     
     if len(dlc_list) > 0:
-        dlc_raw = client.get_product_info(apps=dlc_list)["apps"]
+        dlc_raw = client.get_product_info(apps=dlc_list)["apps")
         for dlc in dlc_raw:
             try:
                 dlc_config_list.append((dlc, dlc_raw[dlc]["common"]["name"]))
