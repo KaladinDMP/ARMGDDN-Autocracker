@@ -347,7 +347,6 @@ def download_achievement_images(game_id, image_names, output_folder):
 
 def generate_achievement_stats(client, game_id, output_directory):
     """Generate achievements.json and stats.json (GBE format)."""
-    # GBE uses 'images/' folder instead of 'achievement_images/'
     images_dir = os.path.join(output_directory, "images")
     images_to_download = []
     
@@ -373,7 +372,6 @@ def generate_achievement_stats(client, game_id, output_directory):
                     
                     for ach in achievements:
                         if "icon" in ach:
-                            # Strip 'images/' prefix if present for download
                             icon_name = ach["icon"].replace("images/", "")
                             images_to_download.append(icon_name)
                         if "icon_gray" in ach:
@@ -453,7 +451,6 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     
     lines = []
     
-    # [app::general] section
     lines.append("")
     lines.append("[app::general]")
     lines.append("# by default the emu will report a `non-beta` branch when the game calls `Steam_Apps::GetCurrentBetaName()`")
@@ -465,7 +462,6 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     lines.append("# default=public")
     lines.append("branch_name=public")
     
-    # [app::dlcs] section
     lines.append("")
     lines.append("[app::dlcs]")
     lines.append("# 1=report all DLCs as unlocked")
@@ -476,14 +472,12 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     lines.append("unlock_all=1")
     lines.append("# format: ID=name")
     
-    # Add actual DLC entries if any exist
     for dlc_id, dlc_name in dlc_list:
         if dlc_name is not None:
             lines.append(f"{dlc_id}={dlc_name}")
         else:
             lines.append(f"{dlc_id}=Unknown DLC")
     
-    # [app::paths] section
     lines.append("")
     lines.append("[app::paths]")
     lines.append("# some rare games might need to be provided one or more paths to appids")
@@ -497,7 +491,6 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     lines.append("# you can deliberately set the path to be empty to specify this behavior like lines below")
     lines.append("#1337=")
     
-    # [app::cloud_save::general] section
     lines.append("")
     lines.append("[app::cloud_save::general]")
     lines.append("# should the emu create the default directory for cloud saves on startup:")
@@ -552,13 +545,11 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     lines.append("#   - if 'XDG_DATA_HOME' is defined: $XDG_DATA_HOME/")
     lines.append("#   - otherwise:                     $HOME/.local/share")
     
-    # [app::cloud_save::win] section
     lines.append("")
     lines.append("[app::cloud_save::win]")
     lines.append("#dir1={::WinAppDataRoaming::}/publisher_name/some_game")
     lines.append("#dir2={::WinMyDocuments::}/publisher_name/some_game/{::Steam3AccountID::}")
     
-    # [app::cloud_save::linux] section
     lines.append("")
     lines.append("[app::cloud_save::linux]")
     lines.append("#dir1={::LinuxXdgDataHome::}/publisher_name/some_game")
@@ -582,7 +573,6 @@ def generate_configs_user_ini(output_directory, options):
     
     lines = []
     
-    # [user::general] section
     lines.append("[user::general]")
     lines.append("# user account name")
     lines.append("# default=gse orca")
@@ -608,7 +598,6 @@ def generate_configs_user_ini(output_directory, options):
     lines.append("# default=US")
     lines.append("ip_country=US")
     
-    # [user::saves] section
     lines.append("")
     lines.append("[user::saves]")
     lines.append("# when this is set, it will force the emu to use the specified location instead of the default global location")
@@ -845,17 +834,15 @@ for appid in appids:
         except Exception as e:
             print(f"Unhandled exception during achievement stats generation for appid {appid}: {e}")
 
-    # Write steam_appid.txt
     with open(os.path.join(out_dir, "steam_appid.txt"), 'w') as f:
         f.write(str(appid))
     print(f"Created steam_appid.txt with appid {appid}")
 
-    # Get and process DLC
     dlc_config_list = []
     dlc_list, depot_app_list = get_dlc(game_info)
     
     if len(dlc_list) > 0:
-        dlc_raw = client.get_product_info(apps=dlc_list)["apps")
+        dlc_raw = client.get_product_info(apps=dlc_list)["apps"]
         for dlc in dlc_raw:
             try:
                 dlc_config_list.append((dlc, dlc_raw[dlc]["common"]["name"]))
