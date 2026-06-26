@@ -106,7 +106,7 @@ def prompt_user_options():
         print()
         print(f"Using saved settings (username: {options['account_name']})")
         if options['portable'] == '1':
-            print(f"Save location: PORTABLE (./{options['local_save_path']}/)")
+            print(f"Save location: PORTABLE (./{options['local_save_path']}/)")        
         else:
             print(f"Save location: AppData ({options['saves_folder_name']})")
         print("(To change settings, edit ask=0 to ask=1 in Resources/Tools/options.txt)")
@@ -282,19 +282,46 @@ for id in sys.argv[1:]:
 
 client = SteamClient()
 
-if len(USERNAME) == 0 or len(PASSWORD) == 0:
-    client.cli_login()
-else:
+def steam_login():
+    global prompt_for_unavailable
+
+    if len(USERNAME) == 0 or len(PASSWORD) == 0:
+        client.cli_login()
+        return
+
+    # Try the old-style credential login first (works with older steam library builds).
+    # If Steam rejects it with InvalidPassword due to the new IAuthenticationService
+    # requirement, fall back to cli_login() which uses the new auth flow and caches
+    # a refresh token so subsequent runs are silent.
     result = client.login(USERNAME, password=PASSWORD)
     auth_code, two_factor_code = None, None
+
     while result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode,
                      EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch,
                      EResult.TryAnotherCM, EResult.ServiceUnavailable,
                      EResult.InvalidPassword):
 
         if result == EResult.InvalidPassword:
-            print("Invalid password, the password you set is wrong.")
-            sys.exit(1)
+            # Steam deprecated the old CM login flow. The password is correct but Steam
+            # requires the new IAuthenticationService flow. cli_login() handles that and
+            # caches a refresh token so future runs don't need to prompt.
+            print()
+            print("============================================")
+            print("  Steam Auth: Switching to new login flow")
+            print("============================================")
+            print("Auto-login rejected by Steam (auth system update, not wrong password).")
+            print("Switching to new auth flow via cli_login...")
+            print()
+            try:
+                # Newer steam library versions accept username+password here and handle
+                # the new auth flow silently, then cache a refresh token.
+                client.cli_login(username=USERNAME, password=PASSWORD)
+            except TypeError:
+                # Older library: cli_login() takes no args, will prompt interactively.
+                print(f"Log in as '{USERNAME}' when prompted.")
+                client.cli_login()
+            return
+
         elif result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode):
             prompt = ("Enter email code: " if result == EResult.AccountLogonDenied else
                       "Incorrect code. Enter email code: ")
@@ -315,6 +342,8 @@ else:
             client.reconnect(maxdelay=15)
 
         result = client.login(USERNAME, PASSWORD, None, auth_code, two_factor_code)
+
+steam_login()
 
 
 def get_stats_schema(client, game_id, owner_id):
@@ -657,7 +686,7 @@ def generate_configs_user_ini(output_directory, options):
     
     print("Created configs.user.ini")
     if options['portable'] == '1':
-        print(f"  Save location: PORTABLE (./{options['local_save_path']}/)")
+        print(f"  Save location: PORTABLE (./{options['local_save_path']}/)")    
     else:
         print(f"  Save location: AppData ({options['saves_folder_name']})")
 
