@@ -22,7 +22,9 @@ HARDCODED_STEAM_IDS = [
 ]
 
 STEAM_IDS_URL = "https://raw.githubusercontent.com/KaladinDMP/steam-top-accounts-data/main/steam_ids_only.txt"
+STEAM_APP_DICT_URL = "https://raw.githubusercontent.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE/main/Resources/AppID/steam_app_dict.json"
 LOCAL_STEAM_IDS_FILE = "steam_ids_cache.txt"
+LOCAL_APP_DICT_FILE = "steam_app_dict_cache.json"
 
 def get_base_path():
     if getattr(sys, 'frozen', False):
@@ -32,20 +34,19 @@ def get_base_path():
 
 BASE_PATH = get_base_path()
 LOCAL_STEAM_IDS_FILE = os.path.join(BASE_PATH, LOCAL_STEAM_IDS_FILE)
+LOCAL_APP_DICT_FILE = os.path.join(BASE_PATH, LOCAL_APP_DICT_FILE)
 
 def get_options_file_path():
-    """Get path to options.txt in Resources/Tools folder"""
     base = get_base_path()
     return os.path.join(base, "Tools", "options.txt")
 
 def load_user_options():
-    """Load user options from Resources/Tools/options.txt"""
     defaults = {
         'account_name': 'ARMGDDN',
         'portable': '0',
         'local_save_path': 'saves',
         'saves_folder_name': 'GSE Saves',
-        'ask': '1'  # 1=prompt every time, 0=use saved settings silently
+        'ask': '1'
     }
     
     options_file = get_options_file_path()
@@ -61,7 +62,6 @@ def load_user_options():
                     key, value = line.split('=', 1)
                     key = key.strip()
                     value = value.strip()
-                    # Handle old 'username' key for backwards compatibility
                     if key == 'username':
                         key = 'account_name'
                     if key in defaults:
@@ -73,10 +73,8 @@ def load_user_options():
 
 
 def save_user_options(options):
-    """Save user options to Resources/Tools/options.txt"""
     options_file = get_options_file_path()
     
-    # Make sure Tools directory exists
     tools_dir = os.path.dirname(options_file)
     if not os.path.exists(tools_dir):
         os.makedirs(tools_dir)
@@ -99,13 +97,8 @@ def save_user_options(options):
 
 
 def prompt_user_options():
-    """
-    Ask user if they want to change settings.
-    Returns updated options dict.
-    """
     options = load_user_options()
     
-    # If ask=0, just use saved settings silently
     if options.get('ask', '1') == '0':
         print()
         print(f"Using saved settings (username: {options['account_name']})")
@@ -197,7 +190,6 @@ def prompt_user_options():
     else:
         print("Keeping current save location setting.")
     
-    # Ask about disabling future prompts
     print()
     print("--------------------------------------------")
     disable_ask = input("Stop asking every time? (Y/N): ").strip().upper()
@@ -208,7 +200,6 @@ def prompt_user_options():
     else:
         options['ask'] = '1'
     
-    # Save the options for next time
     save_user_options(options)
     
     print()
@@ -216,6 +207,25 @@ def prompt_user_options():
     print()
     
     return options
+
+
+def load_steam_app_dict():
+    """Download and cache the known-games whitelist from the OG GSE repo."""
+    try:
+        with urllib.request.urlopen(STEAM_APP_DICT_URL, timeout=10) as response:
+            content = response.read().decode('utf-8')
+            with open(LOCAL_APP_DICT_FILE, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return json.loads(content)
+    except Exception as e:
+        print(f"Warning: Could not download game list from GitHub: {e}")
+        # Fall back to local cache
+        try:
+            with open(LOCAL_APP_DICT_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
 
 
 def download_and_merge_steam_ids():
@@ -263,6 +273,7 @@ def download_and_merge_steam_ids():
     
     return final_steam_ids
 
+STEAM_APP_DICT = load_steam_app_dict()
 TOP_OWNER_IDS = download_and_merge_steam_ids()
 
 from stats_schema_achievement_gen import achievements_gen
@@ -304,7 +315,6 @@ def get_stats_schema(client, game_id, owner_id):
 
 
 def download_achievement_images(game_id, image_names, output_folder):
-    """Download achievement images to images/ folder (GBE format)."""
     q = queue.Queue()
 
     def downloader_thread():
@@ -346,7 +356,6 @@ def download_achievement_images(game_id, image_names, output_folder):
 
 
 def generate_achievement_stats(client, game_id, output_directory):
-    """Generate achievements.json and stats.json (GBE format)."""
     images_dir = os.path.join(output_directory, "images")
     images_to_download = []
     
@@ -419,7 +428,6 @@ def generate_inventory(client, game_id):
 
 
 def get_dlc(raw_infos):
-    """Extract DLC information from game info."""
     try:
         try:
             dlc_list = set(map(lambda a: int(a), raw_infos["extended"]["listofdlc"].split(",")))
@@ -441,14 +449,6 @@ def get_dlc(raw_infos):
 
 
 def generate_configs_app_ini(output_directory, dlc_list=None):
-    """
-    Generate configs.app.ini (GBE format) with DLC entries.
-    Always creates the file with default config sections.
-    
-    dlc_list: list of tuples (appid, name) - e.g. [(1234, "DLC Name"), (5678, "Another DLC")]
-              Can be None or empty for no DLCs.
-    """
-    
     if dlc_list is None:
         dlc_list = []
     
@@ -570,10 +570,6 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
 
 
 def generate_configs_user_ini(output_directory, options):
-    """
-    Generate configs.user.ini (GBE format) using provided options.
-    Matches the exact template format.
-    """
     ini_path = os.path.join(output_directory, "configs.user.ini")
     
     lines = []
@@ -630,11 +626,8 @@ def generate_configs_user_ini(output_directory, options):
     else:
         print(f"  Save location: AppData ({options['saves_folder_name']})")
 
+
 def generate_configs_overlay_ini(output_directory):
-    """
-    Generate configs.overlay.ini.disabled (GBE format).
-    Disabled by default - user can rename to configs.overlay.ini to enable.
-    """
     ini_path = os.path.join(output_directory, "configs.overlay.ini.disabled")
     
     content = """# ----------------------------
@@ -818,10 +811,24 @@ Stats_Pos_y=0.0
     
     print("Created configs.overlay.ini.disabled")
 
+
 # Main execution
 user_options = prompt_user_options()
 
 for appid in appids:
+    app_key = str(appid)
+
+    # Check game whitelist — skip DLCs and non-game apps
+    if STEAM_APP_DICT:
+        if app_key not in STEAM_APP_DICT:
+            print(f"\nAppID {appid} is not in the known games list — it may be a DLC or non-game app. Skipping.")
+            print("If this is a valid game, it may just be missing from the list.")
+            continue
+        game_name = STEAM_APP_DICT[app_key]['original_name']
+        print(f"\nGame: {game_name} ({appid})")
+    else:
+        print(f"\nProcessing AppID {appid} (game list unavailable, skipping whitelist check)")
+
     out_dir = "steam_settings"
 
     if not os.path.exists(out_dir):
