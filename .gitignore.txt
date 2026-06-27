@@ -1,0 +1,3 @@
+__pycache__/
+*.pyc
+Resources/steam_ids_cache.txt
