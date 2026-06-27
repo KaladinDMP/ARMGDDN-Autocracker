@@ -300,7 +300,7 @@ def get_stats_schema(client, game_id, owner_id):
     message.body.crc_stats = 0
     message.body.steam_id_for_user = owner_id
     client.send(message)
-    return client.wait_msg(EMsg.ClientGetUserStatsResponse, timeout=5)
+    return client.wait_msg(EMsg.ClientGetUserStatsResponse, timeout=1)
 
 
 def download_achievement_images(game_id, image_names, output_folder):
@@ -357,7 +357,8 @@ def generate_achievement_stats(client, game_id, output_directory):
     stats_generated = False
     steam_id_list = TOP_OWNER_IDS
     
-    for x in steam_id_list:
+    print(f"Fetching achievement schema (trying up to {len(steam_id_list)} Steam IDs)...")
+    for i, x in enumerate(steam_id_list):
         out = get_stats_schema(client, game_id, x)
         if out is not None:
             if len(out.body.schema) > 0:
@@ -380,10 +381,14 @@ def generate_achievement_stats(client, game_id, output_directory):
                         if "icongray" in ach:
                             icon_name = ach["icongray"].replace("images/", "")
                             images_to_download.append(icon_name)
+                    print(f"Got achievement schema from ID #{i+1} ({len(achievements)} achievements)")
                     break
                 except ValueError as e:
                     print(f"Error generating stats for Steam ID {x}: {e}")
                     continue
+
+    if not images_to_download:
+        print("No achievements found for this game.")
 
     if len(images_to_download) > 0:
         if not os.path.exists(images_dir):
@@ -506,7 +511,7 @@ def generate_configs_app_ini(output_directory, dlc_list=None):
     lines.append("# you can find a list of them here:")
     lines.append("#   https://partner.steamgames.com/doc/features/cloud#setup")
     lines.append("#")
-    lines.append("# the identifiers must be wrapped with double colons \"::\" like this:")
+    lines.append("# the identifiers must be wrapped with double colons \":::\" like this:")
     lines.append("#   original value: {SteamCloudDocuments}")
     lines.append("#   ini value:      {::SteamCloudDocuments::}")
     lines.append("# notice the braces \"{\" and \"}\", they are not changed")
@@ -842,6 +847,7 @@ for appid in appids:
     dlc_list, depot_app_list = get_dlc(game_info)
     
     if len(dlc_list) > 0:
+        print(f"Fetching info for {len(dlc_list)} DLCs...")
         dlc_raw = client.get_product_info(apps=dlc_list)["apps"]
         for dlc in dlc_raw:
             try:
@@ -861,4 +867,4 @@ for appid in appids:
     print("  - images/ folder (achievement icons)")
     print("  - configs.app.ini (DLC configuration)")
     print("  - configs.user.ini (user settings)")
-    print("  - configs.overlay.ini.disabled (rename to enable overlay)") 
+    print("  - configs.overlay.ini.disabled (rename to enable overlay)")
