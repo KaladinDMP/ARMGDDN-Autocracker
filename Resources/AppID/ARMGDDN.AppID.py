@@ -96,7 +96,7 @@ def update_app_dict_from_github():
     """
     GITHUB_RAW_URL = (
         "https://raw.githubusercontent.com/"
-        "KaladinDMP/ARMGDDN-Autocracker-OG-GSE/"
+        "KaladinDMP/ARMGDDN-Autocracker-GBE-Fork/"
         "main/Resources/AppID/steam_app_dict.json"
     )
 

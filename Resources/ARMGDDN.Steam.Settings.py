@@ -22,7 +22,7 @@ HARDCODED_STEAM_IDS = [
 ]
 
 STEAM_IDS_URL = "https://raw.githubusercontent.com/KaladinDMP/steam-top-accounts-data/main/steam_ids_only.txt"
-STEAM_APP_DICT_URL = "https://raw.githubusercontent.com/KaladinDMP/ARMGDDN-Autocracker-OG-GSE/main/Resources/AppID/steam_app_dict.json"
+STEAM_APP_DICT_URL = "https://raw.githubusercontent.com/KaladinDMP/ARMGDDN-Autocracker-GBE-Fork/main/Resources/AppID/steam_app_dict.json"
 LOCAL_STEAM_IDS_FILE = "steam_ids_cache.txt"
 LOCAL_APP_DICT_FILE = "steam_app_dict_cache.json"
 
